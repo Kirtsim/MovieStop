@@ -1,6 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/movie_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
 
-</android.support.constraint.ConstraintLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="10">
+        <RelativeLayout
+            android:id="@+id/tool_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true">
+            <CheckBox
+                android:id="@+id/star_checkbox"
+                android:button="@drawable/star"
+                android:layout_margin="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/movie_detail_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/movie_thumbnail"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="5dp"
+                tools:background="#ff0"
+                android:contentDescription="@string/movie_thumbnail_desc" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_toEndOf="@+id/movie_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/moview_title"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    tools:text="Guardians of the Galaxy"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    >
+                    <TextView
+                        android:id="@+id/run_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        tools:text="136 mins"/>
+                    <TextView
+                        android:id="@+id/language"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="English"/>
+                    <TextView
+                        android:id="@+id/movie_year"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        tools:text="2017"/>
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/genre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Action, Adventure, Sci-Fi"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/rating_label"
+                        android:text="@string/rating_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"/>
+                    <TextView
+                        android:id="@+id/rating"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="7.6"/>
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>
