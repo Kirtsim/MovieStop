@@ -1,4 +1,4 @@
-package fm.kirtsim.kharos.moviestop.controller;
+package fm.kirtsim.kharos.moviestop.controller.movieList;
 
 import android.support.v4.app.Fragment;
 

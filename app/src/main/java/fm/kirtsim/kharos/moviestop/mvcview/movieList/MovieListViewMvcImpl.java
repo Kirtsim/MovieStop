@@ -9,8 +9,8 @@ import fm.kirtsim.kharos.moviestop.mvcview.BaseViewMvc;
  * Created by kharos on 09/11/2017
  */
 
-public class MovieListViewMvcImpl extends BaseViewMvc implements MovieListViewMvc {
-
+public class MovieListViewMvcImpl extends BaseViewMvc<MovieListViewMvc.MovieListViewListener>
+        implements MovieListViewMvc {
 
     public MovieListViewMvcImpl(ViewGroup container) {
         super(container);

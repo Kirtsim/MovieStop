@@ -8,4 +8,9 @@ import fm.kirtsim.kharos.moviestop.mvcview.ViewMvc;
 
 public interface MovieListViewMvc extends ViewMvc {
 
+    public interface MovieListViewListener {
+        void onMovieStarred(int position, boolean startState);
+        void onMovieItemClicked(int position);
+    }
+
 }
