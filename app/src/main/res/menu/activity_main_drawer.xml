@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item android:title="Movies">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_featured_mov"
+                    android:icon="@drawable/featured_play_list_black_24dp"
+                    android:title="Featured" />
+                <item
+                    android:id="@+id/nav_popular_mov"
+                    android:icon="@drawable/smiley_face_black_24dp"
+                    android:title="Popular" />
+                <item
+                    android:id="@+id/nav_top_mov"
+                    android:icon="@drawable/top_24dp"
+                    android:title="Top rated" />
+
+                <item
+                    android:id="@+id/nav_upcoming_mov"
+                    android:icon="@drawable/upcoming_black_24dp"
+                    android:title="Upcoming" />
+
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="Tools">
+        <menu>
+            <item
+                android:id="@+id/nav_manage"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Tools" />
+            <item
+                android:id="@+id/nav_rate"
+                android:icon="@drawable/star_half_black_24dp"
+                android:title="Share" />
+        </menu>
+    </item>
+
+</menu>
