@@ -1,42 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="5dp"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewModel"
+            type="fm.kirtsim.kharos.moviestop.home.HomeFragmentVM" />
+    </data>
 
-    <fm.kirtsim.kharos.moviestop.customComponent.ThumbnailTab
-        android:id="@+id/tab_featured"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:label="Featured"
-        app:image="@color/colorPrimary" />
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <fm.kirtsim.kharos.moviestop.customComponent.ThumbnailTab
-        android:id="@+id/tab_popular"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="5dp"
-        app:label="Popular"
-        app:image="@color/colorSecondary" />
+        <fm.kirtsim.kharos.moviestop.customComponent.ThumbnailTab
+            android:id="@+id/tab_featured"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:label="Featured"
+            app:image="@{viewModel.backDropPosterFeatured}" />
 
-    <fm.kirtsim.kharos.moviestop.customComponent.ThumbnailTab
-        android:id="@+id/tab_top_rated"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="5dp"
-        app:label="Top rated"
-        app:image="@color/colorPrimaryDark" />
+        <fm.kirtsim.kharos.moviestop.customComponent.ThumbnailTab
+            android:id="@+id/tab_popular"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="5dp"
+            app:label="Popular"
+            app:image="@{viewModel.backDropPosterPopular}" />
 
-    <fm.kirtsim.kharos.moviestop.customComponent.ThumbnailTab
-        android:id="@+id/tab_upcoming"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="5dp"
-        app:label="Upcoming"
-        app:image="@color/textColorPrimary" />
+        <fm.kirtsim.kharos.moviestop.customComponent.ThumbnailTab
+            android:id="@+id/tab_top_rated"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="5dp"
+            app:label="Top rated"
+            app:image="@{viewModel.backDropPosterTopRated}" />
 
-</LinearLayout>
+        <fm.kirtsim.kharos.moviestop.customComponent.ThumbnailTab
+            android:id="@+id/tab_upcoming"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="5dp"
+            app:label="Upcoming"
+            app:image="@{viewModel.backDropPosterUpcoming}" />
+
+    </LinearLayout>
+</layout>

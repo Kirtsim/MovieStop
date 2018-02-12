@@ -1,6 +1,8 @@
 package fm.kirtsim.kharos.moviestop.home;
 
 import android.arch.lifecycle.ViewModel;
+import android.databinding.ObservableField;
+import android.graphics.drawable.Drawable;
 
 import java.util.List;
 
@@ -16,6 +18,17 @@ public class HomeFragmentVM extends ViewModel {
 
     private MoviesCache cachedMovies;
 
+    public final ObservableField<Drawable> backDropPosterFeatured;
+    public final ObservableField<Drawable> backDropPosterPopular;
+    public final ObservableField<Drawable> backDropPosterTopRated;
+    public final ObservableField<Drawable> backDropPosterUpcoming;
+
+    public HomeFragmentVM() {
+        backDropPosterFeatured = new ObservableField<>();
+        backDropPosterPopular = new ObservableField<>();
+        backDropPosterTopRated = new ObservableField<>();
+        backDropPosterUpcoming = new ObservableField<>();
+    }
 
     public void setCachedMovies(MoviesCache cache) {
         this.cachedMovies = cache;
