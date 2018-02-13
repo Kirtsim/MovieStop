@@ -44,13 +44,14 @@ public class HomeFragment extends MovieBaseFragment {
     }
 
     private void refresh() {
-        final View root = getView();
-        if (root != null) {
-            loadImage(postersVM.getFeaturedPosterURL(false), root.findViewById(R.id.tab_featured));
-            loadImage(postersVM.getPopularPosterURL(false),  root.findViewById(R.id.tab_popular));
-            loadImage(postersVM.getTopRatedPosterURL(false), root.findViewById(R.id.tab_top_rated));
-            loadImage(postersVM.getUpcomingPosterURL(false), root.findViewById(R.id.tab_upcoming));
-        }
+//        final View root = getView();
+//        if (root != null) {
+//            loadImage(postersVM.getFeaturedPosterURL(false), root.findViewById(R.id.tab_featured));
+//            loadImage(postersVM.getPopularPosterURL(false),  root.findViewById(R.id.tab_popular));
+//            loadImage(postersVM.getTopRatedPosterURL(false), root.findViewById(R.id.tab_top_rated));
+//            loadImage(postersVM.getUpcomingPosterURL(false), root.findViewById(R.id.tab_upcoming));
+//        }
+        postersVM.fetchAllPosterImages(false);
     }
 
     private void loadImage(Single<String> urlSingle, ThumbnailTab tab) {

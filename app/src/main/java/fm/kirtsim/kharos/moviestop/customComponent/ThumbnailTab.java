@@ -6,10 +6,13 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import fm.kirtsim.kharos.moviestop.R;
 
@@ -19,8 +22,11 @@ import fm.kirtsim.kharos.moviestop.R;
 
 public class ThumbnailTab extends LinearLayout {
 
+    private static final String TAG = ThumbnailTab.class.getSimpleName();
+
     private TextView label;
     private ImageView image;
+    private String imageUrl;
 
     public ThumbnailTab(Context context) {
         this(context, null);
@@ -60,5 +66,13 @@ public class ThumbnailTab extends LinearLayout {
 
     public void setImage(@DrawableRes int drawableRes) {
         image.setBackgroundResource(drawableRes);
+    }
+
+    public void setImageUrl(String url) {
+        imageUrl = url;
+        Log.d(TAG, "setImageUrl: " + url);
+        Glide.with(getContext())
+                .load(url)
+                .into(image);
     }
 }

@@ -34,11 +34,9 @@ public class MainCacheVM extends ViewModel implements MoviesCache {
     public Single<List<MovieItem>> getTopRatedMovies(boolean refresh) {
         if (topRatedMovies != null && !refresh)
             return Single.just(topRatedMovies);
-        Log.d(TAG, "network request!");
         final MovieListService service = new MovieServiceProvider().getMovieListService();
         return service.listTopRatedMovies(apiKey)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .map(r -> resultsToMovieItems(r, movieItems -> topRatedMovies = movieItems));
     }
 
@@ -46,11 +44,9 @@ public class MainCacheVM extends ViewModel implements MoviesCache {
     public Single<List<MovieItem>> getPopularMovies(boolean refresh) {
         if (popularMovies != null && !refresh)
             return Single.just(popularMovies);
-        Log.d(TAG, "network request!");
         final MovieListService service = new MovieServiceProvider().getMovieListService();
         return service.listPopularMovies(apiKey)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .map(r -> resultsToMovieItems(r, movieItems -> popularMovies = movieItems));
     }
 
@@ -61,7 +57,6 @@ public class MainCacheVM extends ViewModel implements MoviesCache {
         final MovieListService service = new MovieServiceProvider().getMovieListService();
         return service.listUpcomingMovies(apiKey)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .map(r -> resultsToMovieItems(r, movieItems -> upcomingMovies = movieItems));
     }
 
@@ -71,7 +66,6 @@ public class MainCacheVM extends ViewModel implements MoviesCache {
             final MovieListService service = new MovieServiceProvider().getMovieListService();
             return service.listFeaturedMovies(apiKey)
                     .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
                     .map(r -> resultsToMovieItems(r, movieItems -> featuredMovies = movieItems));
         }
         return Single.just(featuredMovies);

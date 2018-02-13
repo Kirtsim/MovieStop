@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             app:label="Featured"
-            app:image="@{viewModel.backDropPosterFeatured}" />
+            app:imageUrl="http://image.tmdb.org/t/p/w300/lkOZcsXcOLZYeJ2YxJd3vSldvU4.jpg" />
 
         <fm.kirtsim.kharos.moviestop.customComponent.ThumbnailTab
             android:id="@+id/tab_popular"
@@ -28,7 +28,7 @@
             android:layout_height="200dp"
             android:layout_marginTop="5dp"
             app:label="Popular"
-            app:image="@{viewModel.backDropPosterPopular}" />
+            app:imageUrl="@{viewModel.backDropPosterPopularUrl}" />
 
         <fm.kirtsim.kharos.moviestop.customComponent.ThumbnailTab
             android:id="@+id/tab_top_rated"
@@ -36,7 +36,7 @@
             android:layout_height="200dp"
             android:layout_marginTop="5dp"
             app:label="Top rated"
-            app:image="@{viewModel.backDropPosterTopRated}" />
+            app:imageUrl="@{viewModel.backDropPosterTopRatedUrl}" />
 
         <fm.kirtsim.kharos.moviestop.customComponent.ThumbnailTab
             android:id="@+id/tab_upcoming"
@@ -44,7 +44,7 @@
             android:layout_height="200dp"
             android:layout_marginTop="5dp"
             app:label="Upcoming"
-            app:image="@{viewModel.backDropPosterUpcoming}" />
+            app:imageUrl="@{viewModel.backDropPosterUpcomingUrl}" />
 
     </LinearLayout>
 </layout>
