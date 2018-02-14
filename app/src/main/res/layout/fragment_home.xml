@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             app:label="Featured"
-            app:imageUrl="http://image.tmdb.org/t/p/w300/lkOZcsXcOLZYeJ2YxJd3vSldvU4.jpg" />
+            app:imageUrl="@{viewModel.backDropPosterFeaturedUrl}" />
 
         <fm.kirtsim.kharos.moviestop.customComponent.ThumbnailTab
             android:id="@+id/tab_popular"

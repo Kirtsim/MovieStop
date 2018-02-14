@@ -26,7 +26,6 @@ public class ThumbnailTab extends LinearLayout {
 
     private TextView label;
     private ImageView image;
-    private String imageUrl;
 
     public ThumbnailTab(Context context) {
         this(context, null);
@@ -51,6 +50,7 @@ public class ThumbnailTab extends LinearLayout {
             final TypedArray attArray = context.obtainStyledAttributes(attrs, R.styleable.ThumbnailTab);
             setLabel(attArray.getString(R.styleable.ThumbnailTab_label));
             setImage(attArray.getDrawable(R.styleable.ThumbnailTab_image));
+            setImageUrl(attArray.getString(R.styleable.ThumbnailTab_imageUrl));
             attArray.recycle();
         }
 
@@ -69,8 +69,6 @@ public class ThumbnailTab extends LinearLayout {
     }
 
     public void setImageUrl(String url) {
-        imageUrl = url;
-        Log.d(TAG, "setImageUrl: " + url);
         Glide.with(getContext())
                 .load(url)
                 .into(image);
