@@ -23,18 +23,23 @@ import io.reactivex.schedulers.Schedulers;
 public class MainCacheVM extends ViewModel implements MoviesCache {
     private static final String TAG = MainCacheVM.class.getSimpleName();
 
-    private String apiKey = "";
+    private final String apiKey;
+
+    private final MovieListService service;
 
     private List<MovieItem> topRatedMovies;
     private List<MovieItem> popularMovies;
     private List<MovieItem> upcomingMovies;
     private List<MovieItem> featuredMovies;
 
+    public MainCacheVM(String apiKey, MovieListService service) {
+        this.apiKey = apiKey;
+        this.service = service;
+    }
     @Override
     public Single<List<MovieItem>> getTopRatedMovies(boolean refresh) {
         if (topRatedMovies != null && !refresh)
             return Single.just(topRatedMovies);
-        final MovieListService service = new MovieServiceProvider().getMovieListService();
         return service.listTopRatedMovies(apiKey)
                 .subscribeOn(Schedulers.io())
                 .map(r -> resultsToMovieItems(r, movieItems -> topRatedMovies = movieItems));
@@ -44,7 +49,6 @@ public class MainCacheVM extends ViewModel implements MoviesCache {
     public Single<List<MovieItem>> getPopularMovies(boolean refresh) {
         if (popularMovies != null && !refresh)
             return Single.just(popularMovies);
-        final MovieListService service = new MovieServiceProvider().getMovieListService();
         return service.listPopularMovies(apiKey)
                 .subscribeOn(Schedulers.io())
                 .map(r -> resultsToMovieItems(r, movieItems -> popularMovies = movieItems));
@@ -54,7 +58,6 @@ public class MainCacheVM extends ViewModel implements MoviesCache {
     public Single<List<MovieItem>> getUpcomingMovies(boolean refresh) {
         if (upcomingMovies != null && !refresh)
             return Single.just(upcomingMovies);
-        final MovieListService service = new MovieServiceProvider().getMovieListService();
         return service.listUpcomingMovies(apiKey)
                 .subscribeOn(Schedulers.io())
                 .map(r -> resultsToMovieItems(r, movieItems -> upcomingMovies = movieItems));
@@ -63,7 +66,6 @@ public class MainCacheVM extends ViewModel implements MoviesCache {
     @Override
     public Single<List<MovieItem>> getFeaturedMovies(boolean refresh) {
         if (featuredMovies == null || refresh) {
-            final MovieListService service = new MovieServiceProvider().getMovieListService();
             return service.listFeaturedMovies(apiKey)
                     .subscribeOn(Schedulers.io())
                     .map(r -> resultsToMovieItems(r, movieItems -> featuredMovies = movieItems));
@@ -85,11 +87,6 @@ public class MainCacheVM extends ViewModel implements MoviesCache {
         assigner.cacheMovieItems(movies);
         return movies;
     }
-
-    public void setApiKey(String key) {
-        this.apiKey = key;
-    }
-
 
     /**
      * Interface MovieItemAssigner
