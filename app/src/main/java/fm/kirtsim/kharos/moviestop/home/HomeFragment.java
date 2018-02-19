@@ -2,21 +2,17 @@ package fm.kirtsim.kharos.moviestop.home;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
 
 import fm.kirtsim.kharos.moviestop.MovieBaseFragment;
 import fm.kirtsim.kharos.moviestop.R;
-import fm.kirtsim.kharos.moviestop.customComponent.ThumbnailTab;
+import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
 import fm.kirtsim.kharos.moviestop.databinding.FragmentHomeBinding;
-import io.reactivex.Single;
+import fm.kirtsim.kharos.moviestop.factory.viewModel.HomeFragmentVMFactory;
 
 /**
  * Created by kharos on 05/02/2018
@@ -30,8 +26,10 @@ public class HomeFragment extends MovieBaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        postersVM = ViewModelProviders.of(this).get(HomeFragmentVM.class);
-        postersVM.setCachedMovies(getCachedMovies());
+        MoviesCache movieCache = getCachedMovies();
+        String baseUrl = getString(R.string.POSTER_BASE_URL);
+        postersVM = ViewModelProviders.of(this, new HomeFragmentVMFactory(movieCache, baseUrl))
+                .get(HomeFragmentVM.class);
     }
 
     @Nullable

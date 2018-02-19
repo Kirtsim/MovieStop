@@ -60,7 +60,7 @@ public class ThumbnailTab extends LinearLayout {
         label.setText(labelText);
     }
 
-    public void setImage(Drawable drawable) {
+    public void setImage(Drawable drawable){
         image.setImageDrawable(drawable);
     }
 

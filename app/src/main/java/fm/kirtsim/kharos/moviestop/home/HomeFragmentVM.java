@@ -18,34 +18,24 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 public class HomeFragmentVM extends ViewModel {
 
     private static final String TAG = ViewModel.class.getSimpleName();
-    private static final String BASE_URL = "http://image.tmdb.org/t/p/w300";
-    private static final String DEFAULT_URL = BASE_URL + "/lkOZcsXcOLZYeJ2YxJd3vSldvU4.jpg";
-    private MoviesCache cachedMovies;
+    private final String posterBaseUrl;
+    private final MoviesCache cachedMovies;
 
     public final ObservableField<String> backDropPosterFeaturedUrl;
     public final ObservableField<String> backDropPosterPopularUrl;
     public final ObservableField<String> backDropPosterTopRatedUrl;
     public final ObservableField<String> backDropPosterUpcomingUrl;
 
-    public HomeFragmentVM() {
-        backDropPosterFeaturedUrl = new ObservableField<>(DEFAULT_URL);
-        backDropPosterPopularUrl = new ObservableField<>(DEFAULT_URL);
-        backDropPosterTopRatedUrl = new ObservableField<>(DEFAULT_URL);
-        backDropPosterUpcomingUrl = new ObservableField<>(DEFAULT_URL);
-    }
-
-    public void setCachedMovies(MoviesCache cache) {
-        this.cachedMovies = cache;
-        moviesCacheCheck();
-    }
-
-    private void moviesCacheCheck() {
-        if (cachedMovies == null)
-            throw new IllegalStateException(MoviesCache.class.getSimpleName() + " is null and must be set");
+    public HomeFragmentVM(MoviesCache cachedMovies, String posterBaseUrl) {
+        this.cachedMovies = cachedMovies;
+        this.posterBaseUrl = posterBaseUrl;
+        backDropPosterFeaturedUrl = new ObservableField<>();
+        backDropPosterPopularUrl = new ObservableField<>();
+        backDropPosterTopRatedUrl = new ObservableField<>();
+        backDropPosterUpcomingUrl = new ObservableField<>();
     }
 
     public void fetchAllPosterImages(boolean refresh) {
-        moviesCacheCheck();
         performRequest(cachedMovies.getFeaturedMovies(refresh), backDropPosterFeaturedUrl);
         performRequest(cachedMovies.getPopularMovies(refresh), backDropPosterPopularUrl);
         performRequest(cachedMovies.getTopRatedMovies(refresh), backDropPosterTopRatedUrl);
@@ -62,7 +52,7 @@ public class HomeFragmentVM extends ViewModel {
 
     private String firstMoviePosterURL(List<MovieItem> movies) {
         if (movies != null && movies.size() > 0)
-            return BASE_URL + movies.get(0).getBackdropPosterURL();
-        return DEFAULT_URL;
+            return posterBaseUrl + movies.get(0).getBackdropPosterURL();
+        return "";
     }
 }

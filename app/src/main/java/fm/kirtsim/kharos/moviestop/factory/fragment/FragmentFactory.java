@@ -1,4 +1,4 @@
-package fm.kirtsim.kharos.moviestop.factory;
+package fm.kirtsim.kharos.moviestop.factory.fragment;
 
 /**
  * Created by kharos on 03/02/2018
