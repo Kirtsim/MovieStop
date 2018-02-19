@@ -18,7 +18,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 public class HomeFragmentVM extends ViewModel {
 
     private static final String TAG = ViewModel.class.getSimpleName();
-    private final String baseUrl;
+    private final String posterBaseUrl;
     private final MoviesCache cachedMovies;
 
     public final ObservableField<String> backDropPosterFeaturedUrl;
@@ -26,9 +26,9 @@ public class HomeFragmentVM extends ViewModel {
     public final ObservableField<String> backDropPosterTopRatedUrl;
     public final ObservableField<String> backDropPosterUpcomingUrl;
 
-    public HomeFragmentVM(MoviesCache cachedMovies, String baseUrl) {
+    public HomeFragmentVM(MoviesCache cachedMovies, String posterBaseUrl) {
         this.cachedMovies = cachedMovies;
-        this.baseUrl = baseUrl;
+        this.posterBaseUrl = posterBaseUrl;
         backDropPosterFeaturedUrl = new ObservableField<>();
         backDropPosterPopularUrl = new ObservableField<>();
         backDropPosterTopRatedUrl = new ObservableField<>();
@@ -52,7 +52,7 @@ public class HomeFragmentVM extends ViewModel {
 
     private String firstMoviePosterURL(List<MovieItem> movies) {
         if (movies != null && movies.size() > 0)
-            return baseUrl + movies.get(0).getBackdropPosterURL();
+            return posterBaseUrl + movies.get(0).getBackdropPosterURL();
         return "";
     }
 }

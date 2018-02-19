@@ -1,4 +1,4 @@
-package fm.kirtsim.kharos.moviestop.factory;
+package fm.kirtsim.kharos.moviestop.factory.fragment;
 
 import android.os.Bundle;
 

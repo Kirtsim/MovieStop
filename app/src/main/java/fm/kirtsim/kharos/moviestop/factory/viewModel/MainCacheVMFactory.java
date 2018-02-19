@@ -1,9 +1,10 @@
-package fm.kirtsim.kharos.moviestop.cache;
+package fm.kirtsim.kharos.moviestop.factory.viewModel;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
+import fm.kirtsim.kharos.moviestop.cache.MainCacheVM;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
 
 /**

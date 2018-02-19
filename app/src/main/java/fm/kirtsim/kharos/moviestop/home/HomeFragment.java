@@ -12,7 +12,7 @@ import fm.kirtsim.kharos.moviestop.MovieBaseFragment;
 import fm.kirtsim.kharos.moviestop.R;
 import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
 import fm.kirtsim.kharos.moviestop.databinding.FragmentHomeBinding;
-import fm.kirtsim.kharos.moviestop.factory.HomeFragmentVMFactory;
+import fm.kirtsim.kharos.moviestop.factory.viewModel.HomeFragmentVMFactory;
 
 /**
  * Created by kharos on 05/02/2018
@@ -27,7 +27,7 @@ public class HomeFragment extends MovieBaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MoviesCache movieCache = getCachedMovies();
-        String baseUrl = "";
+        String baseUrl = getString(R.string.POSTER_BASE_URL);
         postersVM = ViewModelProviders.of(this, new HomeFragmentVMFactory(movieCache, baseUrl))
                 .get(HomeFragmentVM.class);
     }

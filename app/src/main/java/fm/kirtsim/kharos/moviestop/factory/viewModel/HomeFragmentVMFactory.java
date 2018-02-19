@@ -1,4 +1,4 @@
-package fm.kirtsim.kharos.moviestop.factory;
+package fm.kirtsim.kharos.moviestop.factory.viewModel;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
@@ -14,11 +14,11 @@ import fm.kirtsim.kharos.moviestop.home.HomeFragmentVM;
 public class HomeFragmentVMFactory implements ViewModelProvider.Factory {
 
     private final MoviesCache moviesCache;
-    private final String baseUrl;
+    private final String posterBaseUrl;
 
-    public HomeFragmentVMFactory(MoviesCache movieCache, String baseUrl) {
+    public HomeFragmentVMFactory(MoviesCache movieCache, String posterBaseUrl) {
         this.moviesCache = movieCache;
-        this.baseUrl = baseUrl;
+        this.posterBaseUrl = posterBaseUrl;
     }
 
     @SuppressWarnings("unchecked")
@@ -28,6 +28,6 @@ public class HomeFragmentVMFactory implements ViewModelProvider.Factory {
         if (!modelClass.isAssignableFrom(HomeFragmentVM.class))
             throw new IllegalArgumentException("Required view model class: " + HomeFragmentVM.class.getSimpleName());
 
-        return (T) new HomeFragmentVM(moviesCache, baseUrl);
+        return (T) new HomeFragmentVM(moviesCache, posterBaseUrl);
     }
 }

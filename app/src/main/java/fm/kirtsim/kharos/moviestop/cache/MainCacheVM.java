@@ -1,19 +1,15 @@
 package fm.kirtsim.kharos.moviestop.cache;
 
 import android.arch.lifecycle.ViewModel;
-import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import fm.kirtsim.kharos.moviestop.pojo.MovieItem;
 import fm.kirtsim.kharos.moviestop.pojo.MovieResponse;
 import fm.kirtsim.kharos.moviestop.pojo.MovieResult;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
-import fm.kirtsim.kharos.moviestop.remote.MovieServiceProvider;
 import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -91,7 +87,7 @@ public class MainCacheVM extends ViewModel implements MoviesCache {
     /**
      * Interface MovieItemAssigner
      *
-* - functional interface used for assigning fetched and translated movies to their
+     * - functional interface used for assigning fetched and translated movies to their
      * corresponding attribute in the MainCacheVM class
      */
 
