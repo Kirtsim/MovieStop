@@ -4,8 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-import fm.kirtsim.kharos.moviestop.cache.MovieCacheProvider;
-import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
+import fm.kirtsim.kharos.moviestop.di.component.TMDBApiComponent;
 
 /**
  * Created by kharos on 03/02/2018
@@ -14,7 +13,6 @@ import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
 public abstract class MovieBaseFragment extends Fragment {
 
     private BaseFragmentListener listener;
-    private MovieCacheProvider cachedMoviesProvider;
 
     @Override
     public void onAttach(Context context) {
@@ -23,14 +21,12 @@ public abstract class MovieBaseFragment extends Fragment {
             throw new IllegalArgumentException("activity must implement " +
                     BaseFragmentListener.class.getSimpleName());
         listener = (BaseFragmentListener) context;
-        cachedMoviesProvider = listener.getCachedMoviesProvider();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         listener = null;
-        cachedMoviesProvider = null;
     }
 
     protected void startFragment(int fragmentID, Bundle args, boolean addToBackStack) {
@@ -41,8 +37,9 @@ public abstract class MovieBaseFragment extends Fragment {
         listener.popLastFragment();
     }
 
-    protected MoviesCache getCachedMovies() {
-        return cachedMoviesProvider.getMoviesCache();
+    protected TMDBApiComponent getTMDBApiComponent() {
+        final App app = (App) getActivity().getApplication();
+        return app.getTmdbApiComponent();
     }
 
 }

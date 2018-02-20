@@ -1,6 +1,5 @@
 package fm.kirtsim.kharos.moviestop;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -12,23 +11,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import javax.inject.Inject;
-
-import fm.kirtsim.kharos.moviestop.cache.MainCacheVM;
-import fm.kirtsim.kharos.moviestop.factory.viewModel.MainCacheVMFactory;
-import fm.kirtsim.kharos.moviestop.cache.MovieCacheProvider;
-import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
 import fm.kirtsim.kharos.moviestop.factory.fragment.AbstractFragmentFactory;
 import fm.kirtsim.kharos.moviestop.factory.fragment.FragmentFactory;
-import fm.kirtsim.kharos.moviestop.remote.MovieListService;
 
-public class MainActivity extends AppCompatActivity implements BaseFragmentListener, MovieCacheProvider {
-
-    @Inject MovieListService service;
+public class MainActivity extends AppCompatActivity implements BaseFragmentListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ((App) getApplication()).getTmdbApiComponent().inject(this);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
@@ -97,11 +86,6 @@ public class MainActivity extends AppCompatActivity implements BaseFragmentListe
     }
 
     @Override
-    public MovieCacheProvider getCachedMoviesProvider() {
-        return this;
-    }
-
-    @Override
     public void startFragment(int fragmentID, Bundle args, boolean addToBackStack) {
         AbstractFragmentFactory factory = new FragmentFactory().getFragmentFactory(fragmentID);
         MovieBaseFragment fragment = factory.create(args);
@@ -121,12 +105,4 @@ public class MainActivity extends AppCompatActivity implements BaseFragmentListe
         getSupportFragmentManager().popBackStack();
     }
 
-    @Override
-    public MoviesCache getMoviesCache() {
-        final App application = (App) getApplication();
-        final String apiKey = getString(R.string.api_key);
-        return ViewModelProviders
-                .of(this, new MainCacheVMFactory(apiKey, service))
-                .get(MainCacheVM.class);
-    }
 }

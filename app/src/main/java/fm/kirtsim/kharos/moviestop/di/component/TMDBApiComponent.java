@@ -6,6 +6,7 @@ import dagger.Component;
 import fm.kirtsim.kharos.moviestop.MainActivity;
 import fm.kirtsim.kharos.moviestop.di.AppModule;
 import fm.kirtsim.kharos.moviestop.di.TMDBApiModule;
+import fm.kirtsim.kharos.moviestop.home.HomeFragment;
 
 /**
  * Created by kharos on 17/02/2018
@@ -14,5 +15,6 @@ import fm.kirtsim.kharos.moviestop.di.TMDBApiModule;
 @Singleton
 @Component(modules = {AppModule.class, TMDBApiModule.class})
 public interface TMDBApiComponent {
-    void inject(MainActivity mainActivity);
+
+    void inject(HomeFragment homeFragment);
 }
