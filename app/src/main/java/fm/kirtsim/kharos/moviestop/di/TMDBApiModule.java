@@ -6,7 +6,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import fm.kirtsim.kharos.moviestop.cache.MainCacheVM;
+import fm.kirtsim.kharos.moviestop.cache.MainCache;
+import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -18,9 +19,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public final class TMDBApiModule {
 
+    private String apiKey;
     private String baseUrl;
 
-    public TMDBApiModule(String baseUrl) {
+    public TMDBApiModule(String apiKey, String baseUrl) {
+        this.apiKey = apiKey;
         this.baseUrl = baseUrl;
     }
 
@@ -40,4 +43,9 @@ public final class TMDBApiModule {
         return retrofit.create(MovieListService.class);
     }
 
+    @Provides
+    @Singleton
+    public MoviesCache provideMoviesCache(MovieListService movieService) {
+        return new MainCache(movieService, apiKey);
+    }
 }

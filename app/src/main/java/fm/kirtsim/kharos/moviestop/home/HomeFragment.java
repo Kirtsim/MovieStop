@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import javax.inject.Inject;
+
 import fm.kirtsim.kharos.moviestop.MovieBaseFragment;
 import fm.kirtsim.kharos.moviestop.R;
 import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
@@ -22,13 +24,14 @@ public class HomeFragment extends MovieBaseFragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
 
     private HomeFragmentVM postersVM;
+    @Inject MoviesCache cachedMovies;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        getTMDBApiComponent().inject(this);
         super.onCreate(savedInstanceState);
-        MoviesCache movieCache = getCachedMovies();
         String baseUrl = getString(R.string.POSTER_BASE_URL);
-        postersVM = ViewModelProviders.of(this, new HomeFragmentVMFactory(movieCache, baseUrl))
+        postersVM = ViewModelProviders.of(this, new HomeFragmentVMFactory(cachedMovies, baseUrl))
                 .get(HomeFragmentVM.class);
     }
 

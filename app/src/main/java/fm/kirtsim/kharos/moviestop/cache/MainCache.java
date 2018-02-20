@@ -32,32 +32,34 @@ public final class MainCache implements MoviesCache {
 
     @Override
     public Single<List<MovieItem>> getTopRatedMovies(boolean refresh) {
-        if (topRatedMovies == null && !refresh)
-            topRatedMovies = findInDatabase();
-        if (topRatedMovies == null || refresh)
-            return service.listTopRatedMovies(apiKey)
-                    .subscribeOn(Schedulers.io())
-                    .map(r -> resultsToMovieItems(r, mItems -> topRatedMovies = mItems));
-
-        return null;
+        return createRequest(() -> topRatedMovies,
+                (movies) -> topRatedMovies = movies,
+                () -> service.listTopRatedMovies(apiKey), refresh);
     }
 
     @Override
     public Single<List<MovieItem>> getPopularMovies(boolean refresh) {
-        return null;
+        return createRequest(() -> popularMovies,
+                (movies) -> popularMovies = movies,
+                () -> service.listPopularMovies(apiKey), refresh);
     }
 
     @Override
     public Single<List<MovieItem>> getUpcomingMovies(boolean refresh) {
-        return null;
+        return createRequest(() -> upcomingMovies,
+                (movies) -> upcomingMovies = movies,
+                () -> service.listUpcomingMovies(apiKey), refresh);
     }
 
     @Override
     public Single<List<MovieItem>> getFeaturedMovies(boolean refresh) {
-        return null;
+        return createRequest(() -> featuredMovies,
+                (movies) -> featuredMovies = movies,
+                () -> service.listFeaturedMovies(apiKey), refresh);
     }
 
     private List<MovieItem> findInDatabase() {
+        // TODO: implement Room database calls
         return null;
     }
 
@@ -70,7 +72,7 @@ public final class MainCache implements MoviesCache {
         if (refresh && moviesGetter.get() != null)
             return Single.just(moviesGetter.get());
 
-        return serviceRequester.request(apiKey)
+        return serviceRequester.request()
                 .subscribeOn(Schedulers.io())
                 .map(r -> resultsToMovieItems(r, moviesAssigner));
     }
@@ -101,7 +103,7 @@ public final class MainCache implements MoviesCache {
      * Interface MoviesAssigner
      *
      * - functional interface used for assigning fetched and translated movies to their
-     * corresponding attribute in the MainCacheVM class
+     * corresponding attribute in the MainCache class
      */
 
     private interface MoviesAssigner {
@@ -112,7 +114,7 @@ public final class MainCache implements MoviesCache {
 
     private interface ServiceRequester {
 
-        Single<MovieResponse> request(String apiKey);
+        Single<MovieResponse> request();
 
     }
 
