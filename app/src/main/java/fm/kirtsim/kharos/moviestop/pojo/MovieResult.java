@@ -53,6 +53,8 @@ public class MovieResult {
     @Expose
     private String releaseDate;
 
+    public MovieResult() {}
+
     public MovieResult(MovieResult other) {
         voteCount = other.voteCount;
         id = other.id;
@@ -183,7 +185,7 @@ public class MovieResult {
     }
 
     public static class Builder {
-        private MovieResult movie;
+        private final MovieResult movie;
 
         public Builder() {
             movie = new MovieResult();

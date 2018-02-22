@@ -81,6 +81,7 @@ public final class MainCache implements MoviesCache {
         final List<MovieResult> results = response.getResults();
         final List<MovieItem> movies = createTranslatedMovieItems(results);
         assigner.assign(movies);
+        System.out.println("returning: "+ movies);
         return movies;
     }
 
@@ -91,6 +92,7 @@ public final class MainCache implements MoviesCache {
         final List<MovieItem> items = new ArrayList<>(results.size());
         for (MovieResult result : results) {
             final MovieItem movie = new MovieItem();
+            movie.setTitle(result.getTitle());
             movie.setBackdropPosterURL(result.getBackdropPath());
             items.add(movie);
         }

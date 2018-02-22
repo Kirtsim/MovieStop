@@ -6,17 +6,21 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fm.kirtsim.kharos.moviestop.cache.MainCache;
 import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
+import fm.kirtsim.kharos.moviestop.pojo.MovieItem;
 import fm.kirtsim.kharos.moviestop.pojo.MovieResponse;
 import fm.kirtsim.kharos.moviestop.pojo.MovieResult;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
+import io.reactivex.Single;
+import io.reactivex.observers.TestObserver;
 
 import static org.mockito.Mockito.when;
 
@@ -32,22 +36,43 @@ public final class TestMainCache {
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
-    private String api_key = "12345678910";
+    private final String API_KEY = "12345678910";
 
     @Test
     public void test_FeaturedMovieListNotNull() {
-        MovieResponse mockResponse = new MovieResponse();
-        mockResponse.setResults();
-        MoviesCache cache = new MainCache(mockMovieService, api_key);
-        when(mockMovieService.listFeaturedMovies(api_key))
-        cache.getFeaturedMovies(false);
+        final String[] TITLES = new String[] { "Title1", "Title2", "Title3" };
+        final MovieResponse mockResponse = createMockResponseFromTitles(TITLES);
+
+        MoviesCache cache = new MainCache(mockMovieService, API_KEY);
+        when(mockMovieService.listFeaturedMovies(API_KEY)).thenReturn(Single.just(mockResponse));
+
+        TestObserver<List<MovieItem>> testObserver = cache.getFeaturedMovies(false).test();
+        testObserver.assertNoErrors()
+                .assertValues(createMovieItemListFromTitles(TITLES));
     }
 
-    private List<MovieResult> createMockMovieResults(String ... titles) {
-        if (titles == null) return Collections.emptyList();
+    private MovieResponse createMockResponseFromTitles(String[] titles) {
+        final MovieResponse response = new MovieResponse();
+        List<MovieResult> list;
+        if (titles == null)
+            list = Collections.emptyList();
+        else {
+            final MovieResult.Builder builder = new MovieResult.Builder();
+            list = Stream.of(titles).map(title -> builder.title(title).build())
+                    .collect(Collectors.toList());
+        }
+        response.setResults(list);
+        return response;
+    }
 
-        final MovieResult.Builder builder = new MovieResult.Builder();
-        List<MovieResult> mockedResults = (Arrays.stream(titles).map(title -> builder.title(title).build()).toArray(MovieResult[]::new));
+    private List<MovieItem> createMovieItemListFromTitles(String[] titles) {
+        return Stream.of(titles).map(this::titleToMovieItem).collect(Collectors.toList());
+    }
+
+    private MovieItem titleToMovieItem(String title) {
+        final MovieItem movie = new MovieItem();
+        movie.setTitle(title);
+        return movie;
     }
 
 }
