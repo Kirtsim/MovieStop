@@ -9,6 +9,7 @@ import dagger.Provides;
 import fm.kirtsim.kharos.moviestop.cache.MainCache;
 import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -46,6 +47,6 @@ public final class TMDBApiModule {
     @Provides
     @Singleton
     public MoviesCache provideMoviesCache(MovieListService movieService) {
-        return new MainCache(movieService, apiKey);
+        return new MainCache(movieService, apiKey, Schedulers::io);
     }
 }

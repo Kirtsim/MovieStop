@@ -1,12 +1,15 @@
 package fm.kirtsim.kharos.moviestop;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +24,7 @@ import fm.kirtsim.kharos.moviestop.pojo.MovieResult;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
+import io.reactivex.schedulers.TestScheduler;
 
 import static org.mockito.Mockito.when;
 
@@ -28,6 +32,7 @@ import static org.mockito.Mockito.when;
  * Created by kharos on 21/02/2018
  */
 
+@RunWith(MockitoJUnitRunner.class)
 public final class TestMainCache {
 
     @Mock
@@ -38,17 +43,25 @@ public final class TestMainCache {
 
     private final String API_KEY = "12345678910";
 
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Test
     public void test_FeaturedMovieListNotNull() {
         final String[] TITLES = new String[] { "Title1", "Title2", "Title3" };
         final MovieResponse mockResponse = createMockResponseFromTitles(TITLES);
 
-        MoviesCache cache = new MainCache(mockMovieService, API_KEY);
+        MoviesCache cache = new MainCache(mockMovieService, API_KEY, TestScheduler::new);
         when(mockMovieService.listFeaturedMovies(API_KEY)).thenReturn(Single.just(mockResponse));
 
-        TestObserver<List<MovieItem>> testObserver = cache.getFeaturedMovies(false).test();
+        TestObserver<List<MovieItem>> testObserver = cache.getFeaturedMovies(false)
+                .doOnEvent((list, err) -> System.out.println(list))
+                .observeOn(new TestScheduler()).test();
+        testObserver.awaitTerminalEvent(300, TimeUnit.MILLISECONDS);
         testObserver.assertNoErrors()
-                .assertValues(createMovieItemListFromTitles(TITLES));
+                .assertValue(createMovieItemListFromTitles(TITLES));
     }
 
     private MovieResponse createMockResponseFromTitles(String[] titles) {
