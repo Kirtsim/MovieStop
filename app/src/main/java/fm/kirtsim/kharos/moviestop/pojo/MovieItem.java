@@ -26,6 +26,8 @@ public class MovieItem {
     }
 
     public void setBackdropPosterURL(String url) {
+        if (url == null)
+            url = "";
         this.backdropPosterURL = url;
     }
 

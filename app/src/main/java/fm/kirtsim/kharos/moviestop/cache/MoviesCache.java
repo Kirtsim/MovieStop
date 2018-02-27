@@ -11,6 +11,11 @@ import io.reactivex.Single;
 
 public interface MoviesCache {
 
+    void setTopRatedMovies(List<MovieItem> movies);
+    void setPopularMovies(List<MovieItem> movies);
+    void setUpcomingMovies(List<MovieItem> movies);
+    void setFeaturedMovies(List<MovieItem> movies);
+
     Single<List<MovieItem>> getTopRatedMovies(boolean refresh);
     Single<List<MovieItem>> getPopularMovies(boolean refresh);
     Single<List<MovieItem>> getUpcomingMovies(boolean refresh);

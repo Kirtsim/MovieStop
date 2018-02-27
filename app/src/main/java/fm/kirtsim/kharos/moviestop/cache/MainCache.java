@@ -10,8 +10,6 @@ import fm.kirtsim.kharos.moviestop.pojo.MovieResult;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
 import fm.kirtsim.kharos.moviestop.threading.SchedulerProvider;
 import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by kharos on 19/02/2018
@@ -34,6 +32,26 @@ public final class MainCache implements MoviesCache {
         this.apiKey = apiKey;
         this.service = movieService;
         this.subscriptionSchedulerProvider = subscriptionSchedulerProvider;
+    }
+
+    @Override
+    public void setFeaturedMovies(List<MovieItem> movies) {
+        featuredMovies = movies;
+    }
+
+    @Override
+    public void setTopRatedMovies(List<MovieItem> movies) {
+        topRatedMovies = movies;
+    }
+
+    @Override
+    public void setPopularMovies(List<MovieItem> movies) {
+        popularMovies = movies;
+    }
+
+    @Override
+    public void setUpcomingMovies(List<MovieItem> movies) {
+        upcomingMovies = movies;
     }
 
     @Override
@@ -75,20 +93,16 @@ public final class MainCache implements MoviesCache {
                                                   boolean refresh) {
         if (moviesGetter.get() == null && !refresh)
             moviesAssigner.assign(findInDatabase());
-        if (refresh && moviesGetter.get() != null) {
-            System.out.println("Returning cached movies");
+        if (!refresh && moviesGetter.get() != null) {
             return Single.just(moviesGetter.get());
-
         }
 
-        System.out.println("Returning from service");
         return serviceRequester.request()
-//                .subscribeOn(Schedulers.io())
                 .subscribeOn(subscriptionSchedulerProvider.newScheduler())
-                .map(r -> resultsToMovieItems(r, moviesAssigner));
+                .map(response -> responseToMovieItems(response, moviesAssigner));
     }
 
-    private List<MovieItem> resultsToMovieItems(MovieResponse response, MoviesAssigner assigner) {
+    private List<MovieItem> responseToMovieItems(MovieResponse response, MoviesAssigner assigner) {
         final List<MovieResult> results = response.getResults();
         final List<MovieItem> movies = createTranslatedMovieItems(results);
         assigner.assign(movies);
