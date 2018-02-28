@@ -1,6 +1,7 @@
 package fm.kirtsim.kharos.moviestop;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,9 +12,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,7 +48,19 @@ public final class TestMainCache {
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
+    private static final List<TwoItems
+            <BiFunction<MoviesCache, Boolean, Single<List<MovieItem>>>, String>> cacheCalls =
+            new ArrayList<>(4);
+
     private final String API_KEY = "12345678910";
+
+    @BeforeClass
+    public static void beforeAll() {
+        cacheCalls.add(new TwoItems<>(MoviesCache::getUpcomingMovies, "getUpcomingMovies"));
+        cacheCalls.add(new TwoItems<>(MoviesCache::getFeaturedMovies, "getFeaturedMovies"));
+        cacheCalls.add(new TwoItems<>(MoviesCache::getTopRatedMovies, "getTopRatedMovies"));
+        cacheCalls.add(new TwoItems<>(MoviesCache::getPopularMovies, "getPopularMovies"));
+    }
 
     @Before
     public void setUp() {
@@ -53,36 +68,30 @@ public final class TestMainCache {
     }
 
     @Test
-    public void test_FeaturedMovieListNoCacheNoRefresh() {
+    public void test_getMovieListNotCachedNoRefresh() {
         final String[] TITLES = new String[] { "Title1", "Title2", "Title3" };
         final MovieResponse mockResponse = createMockResponseFromTitles(TITLES);
+        final List<MovieItem> expected = createMovieItemListFromTitles(TITLES);
         final TestScheduler scheduler = new TestScheduler();
 
-        when(mockMovieService.listFeaturedMovies(anyString())).thenReturn(Single.just(mockResponse));
+        mockCacheCallsWithResponse(mockResponse);
         MoviesCache cache = new MainCache(mockMovieService, API_KEY, () -> scheduler);
 
-        TestObserver<List<MovieItem>> testObserver = cache.getFeaturedMovies(false)
-                .observeOn(scheduler)
-                .test();
-        scheduler.triggerActions();
-
-        testObserver.awaitTerminalEvent(300, TimeUnit.MILLISECONDS);
-        testObserver.assertNoErrors()
-                .assertValue(createMovieItemListFromTitles(TITLES));
+        testMovieCacheRequests(cache, false, expected);
     }
 
-
     @Test
-    public void test_FeaturedMovieListCachedNoRefresh() {
-        final String[] TITLES = new String[] { "Title1", "Title2", "Title3" };
+    public void test_getMovieListCachedNoRefresh() {
+        final String[] TITLES = new String[]{"Title1", "Title2", "Title3"};
+        final List<MovieItem> cached = createMovieItemListFromTitles(TITLES);
+        final List<MovieItem> expected = createMovieItemListFromTitles(TITLES);
+        final MoviesCache cache = new MainCache(mockMovieService, API_KEY, TestScheduler::new);
+        cache.setFeaturedMovies(cached);
+        cache.setPopularMovies(cached);
+        cache.setTopRatedMovies(cached);
+        cache.setUpcomingMovies(cached);
 
-        MoviesCache cache = new MainCache(mockMovieService, API_KEY, TestScheduler::new);
-        ((MainCache) cache).setFeaturedMovies(createMovieItemListFromTitles(TITLES));
-        TestObserver<List<MovieItem>> testObserver = cache.getFeaturedMovies(false)
-                .test();
-        testObserver.awaitTerminalEvent(300, TimeUnit.MILLISECONDS);
-        testObserver.assertNoErrors()
-                .assertValue(createMovieItemListFromTitles(TITLES));
+        testMovieCacheRequests(cache, false, expected);
     }
 
     private MovieResponse createMockResponseFromTitles(String[] titles) {
@@ -107,5 +116,28 @@ public final class TestMainCache {
         final MovieItem movie = new MovieItem();
         movie.setTitle(title);
         return movie;
+    }
+
+    private void mockCacheCallsWithResponse(MovieResponse response) {
+        when(mockMovieService.listFeaturedMovies(anyString())).thenReturn(Single.just(response));
+        when(mockMovieService.listPopularMovies(anyString())).thenReturn(Single.just(response));
+        when(mockMovieService.listTopRatedMovies(anyString())).thenReturn(Single.just(response));
+        when(mockMovieService.listUpcomingMovies(anyString())).thenReturn(Single.just(response));
+    }
+
+    private void testMovieCacheRequests(MoviesCache cache, boolean refresh, List<MovieItem> expected) {
+        final TestScheduler scheduler = new TestScheduler();
+        for (TwoItems<BiFunction<MoviesCache, Boolean, Single<List<MovieItem>>>, String> items : cacheCalls) {
+            System.out.print(items.second + ": ");
+            TestObserver<List<MovieItem>> testObserver = items.first.apply(cache, false)
+                    .observeOn(scheduler)
+                    .test();
+
+            scheduler.triggerActions();
+            testObserver.awaitTerminalEvent(300, TimeUnit.MILLISECONDS);
+            testObserver.assertNoErrors()
+                .assertValue(expected);
+            System.out.println("success");
+        }
     }
 }
