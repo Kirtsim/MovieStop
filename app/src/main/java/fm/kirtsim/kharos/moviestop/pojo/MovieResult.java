@@ -53,6 +53,25 @@ public class MovieResult {
     @Expose
     private String releaseDate;
 
+    public MovieResult() {}
+
+    public MovieResult(MovieResult other) {
+        voteCount = other.voteCount;
+        id = other.id;
+        video = other.video;
+        voteAverage = other.voteAverage;
+        title = other.title;
+        popularity = other.popularity;
+        posterPath = other.posterPath;
+        originalLanguage = other.originalLanguage;
+        originalTitle = other.originalTitle;
+        genreIds = other.genreIds;
+        backdropPath = other.backdropPath;
+        adult = other.adult;
+        overview = other.overview;
+        releaseDate = other.releaseDate;
+    }
+
     public int getVoteCount() {
         return voteCount;
     }
@@ -163,5 +182,22 @@ public class MovieResult {
 
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+    public static class Builder {
+        private final MovieResult movie;
+
+        public Builder() {
+            movie = new MovieResult();
+        }
+
+        public Builder title(String title) {
+            movie.setTitle(title);
+            return this;
+        }
+
+        public MovieResult build() {
+            return new MovieResult(movie);
+        }
     }
 }
