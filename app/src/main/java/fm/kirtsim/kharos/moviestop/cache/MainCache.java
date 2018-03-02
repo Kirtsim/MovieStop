@@ -6,7 +6,7 @@ import java.util.List;
 
 import fm.kirtsim.kharos.moviestop.pojo.MovieItem;
 import fm.kirtsim.kharos.moviestop.pojo.MovieResponse;
-import fm.kirtsim.kharos.moviestop.pojo.MovieResult;
+import fm.kirtsim.kharos.moviestop.pojo.Movie;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
 import fm.kirtsim.kharos.moviestop.threading.SchedulerProvider;
 import io.reactivex.Single;
@@ -103,21 +103,21 @@ public final class MainCache implements MoviesCache {
     }
 
     private List<MovieItem> responseToMovieItems(MovieResponse response, MoviesAssigner assigner) {
-        final List<MovieResult> results = response.getResults();
+        final List<Movie> results = response.results;
         final List<MovieItem> movies = createTranslatedMovieItems(results);
         assigner.assign(movies);
         return movies;
     }
 
-    private List<MovieItem> createTranslatedMovieItems(List<MovieResult> results) {
+    private List<MovieItem> createTranslatedMovieItems(List<Movie> results) {
         if (results == null)
             return Collections.emptyList();
 
         final List<MovieItem> items = new ArrayList<>(results.size());
-        for (MovieResult result : results) {
+        for (Movie result : results) {
             final MovieItem movie = new MovieItem();
-            movie.setTitle(result.getTitle());
-            movie.setBackdropPosterURL(result.getBackdropPath());
+            movie.setTitle(result.title);
+            movie.setBackdropPosterURL(result.backdropPath);
             items.add(movie);
         }
         return items;

@@ -23,7 +23,7 @@ import fm.kirtsim.kharos.moviestop.cache.MainCache;
 import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
 import fm.kirtsim.kharos.moviestop.pojo.MovieItem;
 import fm.kirtsim.kharos.moviestop.pojo.MovieResponse;
-import fm.kirtsim.kharos.moviestop.pojo.MovieResult;
+import fm.kirtsim.kharos.moviestop.pojo.Movie;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
@@ -116,15 +116,15 @@ public final class TestMainCache {
 
     private MovieResponse createMockResponseFromTitles(String[] titles) {
         final MovieResponse response = new MovieResponse();
-        List<MovieResult> list;
+        List<Movie> list;
         if (titles == null) {
             list = Collections.emptyList();
         } else {
-            final MovieResult.Builder builder = new MovieResult.Builder();
+            final Movie.Builder builder = new Movie.Builder();
             list = Stream.of(titles).map(title -> builder.title(title).build())
                     .collect(Collectors.toList());
         }
-        response.setResults(list);
+        response.results = list;
         return response;
     }
 
