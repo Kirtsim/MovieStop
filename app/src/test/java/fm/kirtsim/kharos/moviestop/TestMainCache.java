@@ -10,7 +10,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
-import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,15 +25,12 @@ import fm.kirtsim.kharos.moviestop.pojo.MovieItem;
 import fm.kirtsim.kharos.moviestop.pojo.MovieResponse;
 import fm.kirtsim.kharos.moviestop.pojo.MovieResult;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.schedulers.TestScheduler;
-import io.reactivex.subscribers.TestSubscriber;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.junit.Assert.*;
 
 /**
  * Created by kharos on 21/02/2018
@@ -53,8 +49,6 @@ public final class TestMainCache {
             <BiFunction<MoviesCache, Boolean, Single<List<MovieItem>>>, String>> cacheCalls =
             new ArrayList<>(4);
 
-    private final String API_KEY = "12345678910";
-
     private TestScheduler scheduler;
     private MoviesCache cache;
 
@@ -70,7 +64,7 @@ public final class TestMainCache {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         scheduler = new TestScheduler();
-        cache = new MainCache(mockMovieService, API_KEY, () -> scheduler);
+        cache = new MainCache(mockMovieService, "1234", () -> scheduler);
     }
 
     @Test
