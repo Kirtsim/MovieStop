@@ -7,7 +7,7 @@ import android.util.Log;
 import java.util.List;
 
 import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
-import fm.kirtsim.kharos.moviestop.pojo.MovieItem;
+import fm.kirtsim.kharos.moviestop.pojo.Movie;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
@@ -35,14 +35,14 @@ public class HomeFragmentVM extends ViewModel {
         backDropPosterUpcomingUrl = new ObservableField<>();
     }
 
-    public void fetchAllPosterImages(boolean refresh) {
+    void fetchAllPosterImages(boolean refresh) {
         performRequest(cachedMovies.getFeaturedMovies(refresh), backDropPosterFeaturedUrl);
         performRequest(cachedMovies.getPopularMovies(refresh), backDropPosterPopularUrl);
         performRequest(cachedMovies.getTopRatedMovies(refresh), backDropPosterTopRatedUrl);
         performRequest(cachedMovies.getUpcomingMovies(refresh), backDropPosterUpcomingUrl);
     }
 
-    private void performRequest(Single<List<MovieItem>> movieListSingle,
+    private void performRequest(Single<List<Movie>> movieListSingle,
                                 ObservableField<String> urlObservable) {
         movieListSingle
                 .observeOn(AndroidSchedulers.mainThread())
@@ -50,9 +50,9 @@ public class HomeFragmentVM extends ViewModel {
                         e -> Log.e(TAG, "error: ", e));
     }
 
-    private String firstMoviePosterURL(List<MovieItem> movies) {
+    private String firstMoviePosterURL(List<Movie> movies) {
         if (movies != null && movies.size() > 0)
-            return posterBaseUrl + movies.get(0).getBackdropPosterURL();
+            return posterBaseUrl + movies.get(0).getBackdropPath();
         return "";
     }
 }

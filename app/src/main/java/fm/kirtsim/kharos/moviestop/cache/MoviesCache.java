@@ -2,7 +2,7 @@ package fm.kirtsim.kharos.moviestop.cache;
 
 import java.util.List;
 
-import fm.kirtsim.kharos.moviestop.pojo.MovieItem;
+import fm.kirtsim.kharos.moviestop.pojo.Movie;
 import io.reactivex.Single;
 
 /**
@@ -11,13 +11,13 @@ import io.reactivex.Single;
 
 public interface MoviesCache {
 
-    void setTopRatedMovies(List<MovieItem> movies);
-    void setPopularMovies(List<MovieItem> movies);
-    void setUpcomingMovies(List<MovieItem> movies);
-    void setFeaturedMovies(List<MovieItem> movies);
+    void setTopRatedMovies(List<Movie> movies);
+    void setPopularMovies(List<Movie> movies);
+    void setUpcomingMovies(List<Movie> movies);
+    void setFeaturedMovies(List<Movie> movies);
 
-    Single<List<MovieItem>> getTopRatedMovies(boolean refresh);
-    Single<List<MovieItem>> getPopularMovies(boolean refresh);
-    Single<List<MovieItem>> getUpcomingMovies(boolean refresh);
-    Single<List<MovieItem>> getFeaturedMovies(boolean refresh);
+    Single<List<Movie>> getTopRatedMovies(boolean refresh);
+    Single<List<Movie>> getPopularMovies(boolean refresh);
+    Single<List<Movie>> getUpcomingMovies(boolean refresh);
+    Single<List<Movie>> getFeaturedMovies(boolean refresh);
 }
