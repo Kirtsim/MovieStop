@@ -1,12 +1,9 @@
 package fm.kirtsim.kharos.moviestop.cache;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import fm.kirtsim.kharos.moviestop.pojo.MovieItem;
+import fm.kirtsim.kharos.moviestop.pojo.Movie;
 import fm.kirtsim.kharos.moviestop.pojo.MovieResponse;
-import fm.kirtsim.kharos.moviestop.pojo.MovieResult;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
 import fm.kirtsim.kharos.moviestop.threading.SchedulerProvider;
 import io.reactivex.Single;
@@ -22,10 +19,10 @@ public final class MainCache implements MoviesCache {
 
     private final SchedulerProvider subscriptionSchedulerProvider;
 
-    private List<MovieItem> topRatedMovies;
-    private List<MovieItem> popularMovies;
-    private List<MovieItem> upcomingMovies;
-    private List<MovieItem> featuredMovies;
+    private List<Movie> topRatedMovies;
+    private List<Movie> popularMovies;
+    private List<Movie> upcomingMovies;
+    private List<Movie> featuredMovies;
 
     public MainCache(MovieListService movieService, String apiKey,
                      SchedulerProvider subscriptionSchedulerProvider) {
@@ -35,59 +32,59 @@ public final class MainCache implements MoviesCache {
     }
 
     @Override
-    public void setFeaturedMovies(List<MovieItem> movies) {
+    public void setFeaturedMovies(List<Movie> movies) {
         featuredMovies = movies;
     }
 
     @Override
-    public void setTopRatedMovies(List<MovieItem> movies) {
+    public void setTopRatedMovies(List<Movie> movies) {
         topRatedMovies = movies;
     }
 
     @Override
-    public void setPopularMovies(List<MovieItem> movies) {
+    public void setPopularMovies(List<Movie> movies) {
         popularMovies = movies;
     }
 
     @Override
-    public void setUpcomingMovies(List<MovieItem> movies) {
+    public void setUpcomingMovies(List<Movie> movies) {
         upcomingMovies = movies;
     }
 
     @Override
-    public Single<List<MovieItem>> getTopRatedMovies(boolean refresh) {
+    public Single<List<Movie>> getTopRatedMovies(boolean refresh) {
         return createRequest(() -> topRatedMovies,
                 (movies) -> topRatedMovies = movies,
                 () -> service.listTopRatedMovies(apiKey), refresh);
     }
 
     @Override
-    public Single<List<MovieItem>> getPopularMovies(boolean refresh) {
+    public Single<List<Movie>> getPopularMovies(boolean refresh) {
         return createRequest(() -> popularMovies,
                 (movies) -> popularMovies = movies,
                 () -> service.listPopularMovies(apiKey), refresh);
     }
 
     @Override
-    public Single<List<MovieItem>> getUpcomingMovies(boolean refresh) {
+    public Single<List<Movie>> getUpcomingMovies(boolean refresh) {
         return createRequest(() -> upcomingMovies,
                 (movies) -> upcomingMovies = movies,
                 () -> service.listUpcomingMovies(apiKey), refresh);
     }
 
     @Override
-    public Single<List<MovieItem>> getFeaturedMovies(boolean refresh) {
+    public Single<List<Movie>> getFeaturedMovies(boolean refresh) {
         return createRequest(() -> featuredMovies,
                 (movies) -> featuredMovies = movies,
                 () -> service.listFeaturedMovies(apiKey), refresh);
     }
 
-    private List<MovieItem> findInDatabase() {
+    private List<Movie> findInDatabase() {
         // TODO: implement Room database calls
         return null;
     }
 
-    private Single<List<MovieItem>> createRequest(MoviesGetter moviesGetter,
+    private Single<List<Movie>> createRequest(MoviesGetter moviesGetter,
                                                   MoviesAssigner moviesAssigner,
                                                   ServiceRequester serviceRequester,
                                                   boolean refresh) {
@@ -99,31 +96,11 @@ public final class MainCache implements MoviesCache {
 
         return serviceRequester.request()
                 .subscribeOn(subscriptionSchedulerProvider.newScheduler())
-                .map(response -> responseToMovieItems(response, moviesAssigner));
+                .map(response -> {
+                    moviesAssigner.assign(response.getResults());
+                    return response.getResults();
+                });
     }
-
-    private List<MovieItem> responseToMovieItems(MovieResponse response, MoviesAssigner assigner) {
-        final List<MovieResult> results = response.getResults();
-        final List<MovieItem> movies = createTranslatedMovieItems(results);
-        assigner.assign(movies);
-        return movies;
-    }
-
-    private List<MovieItem> createTranslatedMovieItems(List<MovieResult> results) {
-        if (results == null)
-            return Collections.emptyList();
-
-        final List<MovieItem> items = new ArrayList<>(results.size());
-        for (MovieResult result : results) {
-            final MovieItem movie = new MovieItem();
-            movie.setTitle(result.getTitle());
-            movie.setBackdropPosterURL(result.getBackdropPath());
-            items.add(movie);
-        }
-        return items;
-    }
-
-
 
      /**
      * Interface MoviesAssigner
@@ -134,7 +111,7 @@ public final class MainCache implements MoviesCache {
 
     private interface MoviesAssigner {
 
-        void assign(List<MovieItem> movieItems);
+        void assign(List<Movie> movieItems);
 
     }
 
@@ -146,7 +123,7 @@ public final class MainCache implements MoviesCache {
 
     private interface MoviesGetter {
 
-        List<MovieItem> get();
+        List<Movie> get();
 
     }
 }

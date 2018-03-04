@@ -35,10 +35,7 @@ public class MovieItem {
         return backdropPosterURL;
     }
 
-    @Override
-    public String toString() {
-        return "MovieItem - title: " + title + " - bckURL: " + backdropPosterURL;
-    }
+
 
     @Override
     public boolean equals(Object obj) {
