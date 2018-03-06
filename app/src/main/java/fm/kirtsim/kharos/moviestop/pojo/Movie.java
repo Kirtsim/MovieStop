@@ -1,16 +1,29 @@
 package fm.kirtsim.kharos.moviestop.pojo;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.TypeConverters;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import fm.kirtsim.kharos.moviestop.db.typeCoverter.movie.GenreIdsTypeConverter;
 
 /**
  * Created by kharos on 09/02/2018
  */
 
+@Entity(primaryKeys = "id")
 public class Movie {
+
+    public static final char STATUS_FEATURED = 'F';
+    public static final char STATUS_UPCOMING = 'U';
+    public static final char STATUS_POPULAR = 'P';
+    public static final char STATUS_TOP_RATED = 'T';
 
     @SerializedName("vote_count")
     @Expose private int voteCount;
@@ -36,6 +49,7 @@ public class Movie {
     @SerializedName("original_language")
     @Expose private String originalLanguage = "";
 
+    @TypeConverters(GenreIdsTypeConverter.class)
     @SerializedName("genre_ids")
     @Expose private List<Integer> genreIds = Collections.emptyList();
 
@@ -51,6 +65,9 @@ public class Movie {
 
     @SerializedName("release_date")
     @Expose private String releaseDate = "";
+
+
+    private List<Character> status;
 
     public Movie() {}
 
@@ -187,6 +204,25 @@ public class Movie {
         if (releaseDate == null)
             releaseDate = "";
         this.releaseDate = releaseDate;
+    }
+
+    public void setStatus(List<Character> status) {
+        this.status = new ArrayList<>(status.size());
+        for (Character singleStatus : status)
+            addStatus(singleStatus);
+    }
+
+    public void addStatus(char newStatus) {
+        if (!isStatusValid(newStatus) || status.contains(newStatus))
+            return;
+        status.add(newStatus);
+    }
+
+    private boolean isStatusValid(char status) {
+        return status == STATUS_FEATURED ||
+                status == STATUS_POPULAR ||
+                status == STATUS_UPCOMING ||
+                status == STATUS_TOP_RATED;
     }
 
     public static class Builder {
