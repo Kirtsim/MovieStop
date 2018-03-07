@@ -1,7 +1,6 @@
 package fm.kirtsim.kharos.moviestop.pojo;
 
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.TypeConverters;
 
 import com.google.gson.annotations.Expose;
@@ -12,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import fm.kirtsim.kharos.moviestop.db.typeCoverter.movie.GenreIdsTypeConverter;
+import fm.kirtsim.kharos.moviestop.db.typeCoverter.movie.StatusConverter;
 
 /**
  * Created by kharos on 09/02/2018
@@ -20,10 +20,6 @@ import fm.kirtsim.kharos.moviestop.db.typeCoverter.movie.GenreIdsTypeConverter;
 @Entity(primaryKeys = "id")
 public class Movie {
 
-    public static final char STATUS_FEATURED = 'F';
-    public static final char STATUS_UPCOMING = 'U';
-    public static final char STATUS_POPULAR = 'P';
-    public static final char STATUS_TOP_RATED = 'T';
 
     @SerializedName("vote_count")
     @Expose private int voteCount;
@@ -66,8 +62,8 @@ public class Movie {
     @SerializedName("release_date")
     @Expose private String releaseDate = "";
 
-
-    private List<Character> status;
+    @TypeConverters(StatusConverter.class)
+    private List<String> status;
 
     public Movie() {}
 
@@ -206,23 +202,23 @@ public class Movie {
         this.releaseDate = releaseDate;
     }
 
-    public void setStatus(List<Character> status) {
+    public void setStatus(List<String> status) {
         this.status = new ArrayList<>(status.size());
-        for (Character singleStatus : status)
+        for (String singleStatus : status)
             addStatus(singleStatus);
     }
 
-    public void addStatus(char newStatus) {
+    public void addStatus(String newStatus) {
         if (!isStatusValid(newStatus) || status.contains(newStatus))
             return;
         status.add(newStatus);
     }
 
-    private boolean isStatusValid(char status) {
-        return status == STATUS_FEATURED ||
-                status == STATUS_POPULAR ||
-                status == STATUS_UPCOMING ||
-                status == STATUS_TOP_RATED;
+    private boolean isStatusValid(String status) {
+        return status.equals(STATUS_FEATURED) ||
+                status.equals(STATUS_POPULAR) ||
+                status.equals(STATUS_UPCOMING) ||
+                status.equals(STATUS_TOP_RATED);
     }
 
     public static class Builder {
