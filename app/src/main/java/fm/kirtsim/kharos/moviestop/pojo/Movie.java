@@ -6,12 +6,10 @@ import android.arch.persistence.room.TypeConverters;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import fm.kirtsim.kharos.moviestop.db.typeCoverter.movie.GenreIdsTypeConverter;
-import fm.kirtsim.kharos.moviestop.db.typeCoverter.movie.StatusConverter;
 
 /**
  * Created by kharos on 09/02/2018
@@ -61,9 +59,6 @@ public class Movie {
 
     @SerializedName("release_date")
     @Expose private String releaseDate = "";
-
-    @TypeConverters(StatusConverter.class)
-    private List<String> status;
 
     public Movie() {}
 
@@ -200,25 +195,6 @@ public class Movie {
         if (releaseDate == null)
             releaseDate = "";
         this.releaseDate = releaseDate;
-    }
-
-    public void setStatus(List<String> status) {
-        this.status = new ArrayList<>(status.size());
-        for (String singleStatus : status)
-            addStatus(singleStatus);
-    }
-
-    public void addStatus(String newStatus) {
-        if (!isStatusValid(newStatus) || status.contains(newStatus))
-            return;
-        status.add(newStatus);
-    }
-
-    private boolean isStatusValid(String status) {
-        return status.equals(STATUS_FEATURED) ||
-                status.equals(STATUS_POPULAR) ||
-                status.equals(STATUS_UPCOMING) ||
-                status.equals(STATUS_TOP_RATED);
     }
 
     public static class Builder {

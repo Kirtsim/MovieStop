@@ -26,4 +26,11 @@ public interface MovieStatusDao {
 
     @Delete
     void delete(List<MovieStatus> statuses);
+
+
+    @Query("DELETE FROM MovieStatus WHERE status LIKE :status")
+    void deleteStatusesWithName(String status);
+
+    @Query("DELETE FROM MovieStatus")
+    void deleteAll();
 }

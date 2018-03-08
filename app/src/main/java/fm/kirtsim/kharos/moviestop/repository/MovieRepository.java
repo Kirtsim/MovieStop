@@ -2,6 +2,7 @@ package fm.kirtsim.kharos.moviestop.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import fm.kirtsim.kharos.moviestop.cache.MovieCache;
 import fm.kirtsim.kharos.moviestop.db.MovieDao;
@@ -11,6 +12,7 @@ import fm.kirtsim.kharos.moviestop.pojo.MovieResponse;
 import fm.kirtsim.kharos.moviestop.pojo.MovieStatus;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
 import fm.kirtsim.kharos.moviestop.threading.SchedulerProvider;
+import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
@@ -46,19 +48,67 @@ public final class MovieRepository {
         this.api_key = api_key;
     }
 
-    public Single<List<Movie>> getFeaturedMovies(boolean forceRefresh) {
-        if (forceRefresh)
-            return apiService.listFeaturedMovies(api_key).subscribeOn(schedulerProvider.newScheduler())
-                   .map(MovieResponse::getResults).doOnSuccess(movies -> {
-                        cachedMovies.setFeaturedMovies(movies);
-                        saveMoviesInDatabase(movies, MovieStatus.STATUS_FEATURED);  // TODO: last line modified here
-                    });
+    public Completable clearDatabase() {
+        return Completable.create(e -> {
+            movieStatusDao.deleteAll();
+            movieDao.deleteAll();
+        }).subscribeOn(schedulerProvider.newScheduler());
+    }
 
-        if (!cachedMovies.getFeaturedMovies().isEmpty())
-            return Single.just(cachedMovies.getFeaturedMovies());
+    public Single<List<Movie>> getFeaturedMovies(boolean refresh) {
+        return getMovies(
+                cachedMovies::getFeaturedMovies,
+                cachedMovies::setFeaturedMovies,
+                MovieStatus.STATUS_FEATURED, refresh
+        );
+    }
 
-        return movieDao.selectMovies(MovieStatus.STATUS_FEATURED).subscribeOn(schedulerProvider.newScheduler())
-                .doOnSuccess(cachedMovies::setFeaturedMovies);
+    public Single<List<Movie>> getTopRatedMovies(boolean refresh) {
+        return getMovies(
+                cachedMovies::getTopRatedMovies,
+                cachedMovies::setTopRatedMovies,
+                MovieStatus.STATUS_TOP_RATED, refresh
+        );
+    }
+
+    public Single<List<Movie>> getUpcomingMovies(boolean refresh) {
+        return getMovies(
+                cachedMovies::getUpcomingMovies,
+                cachedMovies::setUpcomingMovies,
+                MovieStatus.STATUS_UPCOMING, refresh
+        );
+    }
+
+    public Single<List<Movie>> getPopularMovies(boolean refresh) {
+        return getMovies(
+                cachedMovies::getPopularMovies,
+                cachedMovies::setPopularMovies,
+                MovieStatus.STATUS_POPULAR, refresh
+        );
+    }
+
+
+    private Single<List<Movie>> getMovies(CachedMoviesGetter cachedMoviesGetter,
+                                          AssignerToCache cacheAssigner,
+                                          String movieStatus, boolean refresh) {
+        if (refresh)
+            return requestMovies(cacheAssigner, movieStatus);
+
+        if (!cachedMoviesGetter.getCachedMovies().isEmpty())
+            return Single.just(cachedMoviesGetter.getCachedMovies());
+
+        return movieDao.selectMovies(movieStatus).subscribeOn(schedulerProvider.newScheduler())
+                .doOnSuccess(cacheAssigner::assignMovies);
+    }
+
+    private Single<List<Movie>> requestMovies(AssignerToCache assignerToCache, String status) {
+        return apiService.listFeaturedMovies(api_key).subscribeOn(schedulerProvider.newScheduler())
+               .map(MovieResponse::getResults).doOnSuccess(movies -> {
+                    assignerToCache.assignMovies(movies);
+                    movieStatusDao.deleteStatusesWithName(status);
+                    movieDao.deleteMoviesWithoutStatus();
+                    saveMoviesInDatabase(movies, status);
+            });
     }
 
     private void saveMoviesInDatabase(List<Movie> movies, String status) {
@@ -70,10 +120,17 @@ public final class MovieRepository {
         movieStatusDao.insert(statuses);
     }
 
-    private void setStatusToMovies(List<Movie> movies, String status) {
-        if (movies == null) return;
-        for (Movie movie : movies)
-            movie.addStatus(status);
+
+    /**
+     * Functional interfaces for convenience
+     */
+
+    private interface AssignerToCache {
+        void assignMovies(List<Movie> movies);
+    }
+
+    private interface CachedMoviesGetter {
+        List<Movie> getCachedMovies();
     }
 
 }
