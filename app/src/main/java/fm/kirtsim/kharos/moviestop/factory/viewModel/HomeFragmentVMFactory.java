@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
 import fm.kirtsim.kharos.moviestop.home.HomeFragmentVM;
+import fm.kirtsim.kharos.moviestop.repository.MovieRepository;
 
 /**
  * Created by kharos on 18/02/2018
@@ -13,11 +14,11 @@ import fm.kirtsim.kharos.moviestop.home.HomeFragmentVM;
 
 public class HomeFragmentVMFactory implements ViewModelProvider.Factory {
 
-    private final MoviesCache moviesCache;
+    private final MovieRepository repository;
     private final String posterBaseUrl;
 
-    public HomeFragmentVMFactory(MoviesCache movieCache, String posterBaseUrl) {
-        this.moviesCache = movieCache;
+    public HomeFragmentVMFactory(MovieRepository repository, String posterBaseUrl) {
+        this.repository = repository;
         this.posterBaseUrl = posterBaseUrl;
     }
 
@@ -28,6 +29,6 @@ public class HomeFragmentVMFactory implements ViewModelProvider.Factory {
         if (!modelClass.isAssignableFrom(HomeFragmentVM.class))
             throw new IllegalArgumentException("Required view model class: " + HomeFragmentVM.class.getSimpleName());
 
-        return (T) new HomeFragmentVM(moviesCache, posterBaseUrl);
+        return (T) new HomeFragmentVM(repository, posterBaseUrl);
     }
 }

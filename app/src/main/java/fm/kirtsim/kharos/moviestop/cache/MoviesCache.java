@@ -8,7 +8,7 @@ import io.reactivex.Single;
 /**
  * Created by kharos on 05/02/2018
  */
-
+@Deprecated
 public interface MoviesCache {
 
     void setTopRatedMovies(List<Movie> movies);

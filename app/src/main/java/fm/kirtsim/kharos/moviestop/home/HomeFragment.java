@@ -12,9 +12,9 @@ import javax.inject.Inject;
 
 import fm.kirtsim.kharos.moviestop.MovieBaseFragment;
 import fm.kirtsim.kharos.moviestop.R;
-import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
 import fm.kirtsim.kharos.moviestop.databinding.FragmentHomeBinding;
 import fm.kirtsim.kharos.moviestop.factory.viewModel.HomeFragmentVMFactory;
+import fm.kirtsim.kharos.moviestop.repository.MovieRepository;
 
 /**
  * Created by kharos on 05/02/2018
@@ -24,14 +24,14 @@ public class HomeFragment extends MovieBaseFragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
 
     private HomeFragmentVM postersVM;
-    @Inject MoviesCache cachedMovies;
+    @Inject MovieRepository repository;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         getTMDBApiComponent().inject(this);
         super.onCreate(savedInstanceState);
         String baseUrl = getString(R.string.POSTER_BASE_URL);
-        postersVM = ViewModelProviders.of(this, new HomeFragmentVMFactory(cachedMovies, baseUrl))
+        postersVM = ViewModelProviders.of(this, new HomeFragmentVMFactory(repository, baseUrl))
                 .get(HomeFragmentVM.class);
     }
 
@@ -46,7 +46,10 @@ public class HomeFragment extends MovieBaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        loadImages();
+        if (savedInstanceState != null)
+            loadImages();
+        else
+            refresh();
     }
 
     private void loadImages() {

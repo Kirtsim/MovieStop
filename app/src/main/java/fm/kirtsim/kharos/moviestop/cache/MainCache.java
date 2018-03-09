@@ -11,7 +11,7 @@ import io.reactivex.Single;
 /**
  * Created by kharos on 19/02/2018
  */
-
+@Deprecated
 public final class MainCache implements MoviesCache {
     private final String apiKey;
 

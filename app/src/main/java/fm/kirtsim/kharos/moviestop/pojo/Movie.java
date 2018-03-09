@@ -1,16 +1,23 @@
 package fm.kirtsim.kharos.moviestop.pojo;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.TypeConverters;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Collections;
 import java.util.List;
 
+import fm.kirtsim.kharos.moviestop.db.typeCoverter.movie.GenreIdsTypeConverter;
+
 /**
  * Created by kharos on 09/02/2018
  */
 
+@Entity(primaryKeys = "id")
 public class Movie {
+
 
     @SerializedName("vote_count")
     @Expose private int voteCount;
@@ -36,6 +43,7 @@ public class Movie {
     @SerializedName("original_language")
     @Expose private String originalLanguage = "";
 
+    @TypeConverters(GenreIdsTypeConverter.class)
     @SerializedName("genre_ids")
     @Expose private List<Integer> genreIds = Collections.emptyList();
 
