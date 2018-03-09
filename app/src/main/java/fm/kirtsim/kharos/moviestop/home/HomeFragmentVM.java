@@ -6,8 +6,12 @@ import android.util.Log;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import fm.kirtsim.kharos.moviestop.cache.MovieCache;
 import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
 import fm.kirtsim.kharos.moviestop.pojo.Movie;
+import fm.kirtsim.kharos.moviestop.repository.MovieRepository;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
@@ -19,15 +23,15 @@ public class HomeFragmentVM extends ViewModel {
 
     private static final String TAG = ViewModel.class.getSimpleName();
     private final String posterBaseUrl;
-    private final MoviesCache cachedMovies;
+    private final MovieRepository repository;
 
     public final ObservableField<String> backDropPosterFeaturedUrl;
     public final ObservableField<String> backDropPosterPopularUrl;
     public final ObservableField<String> backDropPosterTopRatedUrl;
     public final ObservableField<String> backDropPosterUpcomingUrl;
 
-    public HomeFragmentVM(MoviesCache cachedMovies, String posterBaseUrl) {
-        this.cachedMovies = cachedMovies;
+    public HomeFragmentVM(MovieRepository repository, String posterBaseUrl) {
+        this.repository = repository;
         this.posterBaseUrl = posterBaseUrl;
         backDropPosterFeaturedUrl = new ObservableField<>();
         backDropPosterPopularUrl = new ObservableField<>();
@@ -36,10 +40,10 @@ public class HomeFragmentVM extends ViewModel {
     }
 
     void fetchAllPosterImages(boolean refresh) {
-        performRequest(cachedMovies.getFeaturedMovies(refresh), backDropPosterFeaturedUrl);
-        performRequest(cachedMovies.getPopularMovies(refresh), backDropPosterPopularUrl);
-        performRequest(cachedMovies.getTopRatedMovies(refresh), backDropPosterTopRatedUrl);
-        performRequest(cachedMovies.getUpcomingMovies(refresh), backDropPosterUpcomingUrl);
+        performRequest(repository.getFeaturedMovies(refresh), backDropPosterFeaturedUrl);
+        performRequest(repository.getPopularMovies(refresh), backDropPosterPopularUrl);
+        performRequest(repository.getTopRatedMovies(refresh), backDropPosterTopRatedUrl);
+        performRequest(repository.getUpcomingMovies(refresh), backDropPosterUpcomingUrl);
     }
 
     private void performRequest(Single<List<Movie>> movieListSingle,

@@ -57,6 +57,7 @@ public final class MovieRepository {
 
     public Single<List<Movie>> getFeaturedMovies(boolean refresh) {
         return getMovies(
+                () -> apiService.listFeaturedMovies(api_key),
                 cachedMovies::getFeaturedMovies,
                 cachedMovies::setFeaturedMovies,
                 MovieStatus.STATUS_FEATURED, refresh
@@ -65,6 +66,7 @@ public final class MovieRepository {
 
     public Single<List<Movie>> getTopRatedMovies(boolean refresh) {
         return getMovies(
+                () -> apiService.listTopRatedMovies(api_key),
                 cachedMovies::getTopRatedMovies,
                 cachedMovies::setTopRatedMovies,
                 MovieStatus.STATUS_TOP_RATED, refresh
@@ -73,6 +75,7 @@ public final class MovieRepository {
 
     public Single<List<Movie>> getUpcomingMovies(boolean refresh) {
         return getMovies(
+                () -> apiService.listUpcomingMovies(api_key),
                 cachedMovies::getUpcomingMovies,
                 cachedMovies::setUpcomingMovies,
                 MovieStatus.STATUS_UPCOMING, refresh
@@ -81,6 +84,7 @@ public final class MovieRepository {
 
     public Single<List<Movie>> getPopularMovies(boolean refresh) {
         return getMovies(
+                () -> apiService.listPopularMovies(api_key),
                 cachedMovies::getPopularMovies,
                 cachedMovies::setPopularMovies,
                 MovieStatus.STATUS_POPULAR, refresh
@@ -88,11 +92,11 @@ public final class MovieRepository {
     }
 
 
-    private Single<List<Movie>> getMovies(CachedMoviesGetter cachedMoviesGetter,
+    private Single<List<Movie>> getMovies(ApiCall apiCall, CachedMoviesGetter cachedMoviesGetter,
                                           AssignerToCache cacheAssigner,
                                           String movieStatus, boolean refresh) {
         if (refresh)
-            return requestMovies(cacheAssigner, movieStatus);
+            return requestMovies(apiCall, cacheAssigner, movieStatus);
 
         if (!cachedMoviesGetter.getCachedMovies().isEmpty())
             return Single.just(cachedMoviesGetter.getCachedMovies());
@@ -101,8 +105,9 @@ public final class MovieRepository {
                 .doOnSuccess(cacheAssigner::assignMovies);
     }
 
-    private Single<List<Movie>> requestMovies(AssignerToCache assignerToCache, String status) {
-        return apiService.listFeaturedMovies(api_key).subscribeOn(schedulerProvider.newScheduler())
+    private Single<List<Movie>> requestMovies(ApiCall apiCall, AssignerToCache assignerToCache,
+                                              String status) {
+        return apiCall.call().subscribeOn(schedulerProvider.newScheduler())
                .map(MovieResponse::getResults).doOnSuccess(movies -> {
                     assignerToCache.assignMovies(movies);
                     movieStatusDao.deleteStatusesWithName(status);
@@ -131,6 +136,10 @@ public final class MovieRepository {
 
     private interface CachedMoviesGetter {
         List<Movie> getCachedMovies();
+    }
+
+    private interface ApiCall {
+        Single<MovieResponse> call();
     }
 
 }

@@ -7,8 +7,14 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import fm.kirtsim.kharos.moviestop.cache.MainCache;
+import fm.kirtsim.kharos.moviestop.cache.MovieCache;
 import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
+import fm.kirtsim.kharos.moviestop.db.MovieDB;
+import fm.kirtsim.kharos.moviestop.db.MovieDao;
+import fm.kirtsim.kharos.moviestop.db.MovieStatusDao;
+import fm.kirtsim.kharos.moviestop.pojo.MovieStatus;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
+import fm.kirtsim.kharos.moviestop.repository.MovieRepository;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -28,8 +34,7 @@ public final class TMDBApiModule {
         this.baseUrl = baseUrl;
     }
 
-    @Provides
-    @Singleton
+    @Provides @Singleton
     public Retrofit provideRetrofit() {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -38,15 +43,20 @@ public final class TMDBApiModule {
                 .build();
     }
 
-    @Provides
-    @Singleton
+    @Provides @Singleton
     public MovieListService provideMovieListService(Retrofit retrofit) {
         return retrofit.create(MovieListService.class);
     }
 
-    @Provides
-    @Singleton
-    public MoviesCache provideMoviesCache(MovieListService movieService) {
-        return new MainCache(movieService, apiKey, Schedulers::io);
+    @Provides @Singleton
+    public MovieCache provideMovieCache() {
+        return new MovieCache();
+    }
+
+    @Provides @Singleton
+    public MovieRepository provideMovieRepository(MovieCache movieCache, MovieListService apiService,
+                                                  MovieDao movieDao, MovieStatusDao movieStatusDao) {
+        return new MovieRepository(movieCache, apiService, movieDao, movieStatusDao,
+                Schedulers::io, apiKey);
     }
 }

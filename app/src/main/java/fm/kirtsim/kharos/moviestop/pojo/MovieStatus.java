@@ -3,6 +3,7 @@ package fm.kirtsim.kharos.moviestop.pojo;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.support.annotation.NonNull;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
@@ -26,17 +27,19 @@ public class MovieStatus {
     @ColumnInfo(name = "movie_id")
     private int movieId;
 
+    @NonNull
     private String status;
 
-    public MovieStatus(int movieId, String status) {
-        this.movieId = movieId;
-        this.status = status;
+    public MovieStatus(int movieId, @NonNull String status) {
+        setMovieId(movieId);
+        setStatus(status);
     }
 
-    private Integer getMovieId() {
+    public Integer getMovieId() {
         return movieId;
     }
 
+    @NonNull
     public String getStatus() {
         return status;
     }
@@ -45,7 +48,9 @@ public class MovieStatus {
         this.movieId = movieId;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(@NonNull String status) {
+        if (status == null)
+            status = "";
         this.status = status;
     }
 }

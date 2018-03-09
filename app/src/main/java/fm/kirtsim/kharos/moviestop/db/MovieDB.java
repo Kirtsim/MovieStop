@@ -1,6 +1,7 @@
 package fm.kirtsim.kharos.moviestop.db;
 
 import android.arch.persistence.room.Database;
+import android.arch.persistence.room.RoomDatabase;
 
 import fm.kirtsim.kharos.moviestop.pojo.Movie;
 import fm.kirtsim.kharos.moviestop.pojo.MovieStatus;
@@ -10,9 +11,9 @@ import fm.kirtsim.kharos.moviestop.pojo.MovieStatus;
  */
 @Database(entities = {Movie.class, MovieStatus.class},
         version = 1)
-public abstract class MovieDB {
+public abstract class MovieDB extends RoomDatabase {
 
     public abstract MovieDao getMovieDao();
 
-    public abstract MovieStatus getMovieStatusDao();
+    public abstract MovieStatusDao getMovieStatusDao();
 }
