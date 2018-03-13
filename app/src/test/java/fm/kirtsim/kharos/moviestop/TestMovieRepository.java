@@ -19,6 +19,7 @@ import fm.kirtsim.kharos.moviestop.db.MovieDao;
 import fm.kirtsim.kharos.moviestop.db.MovieStatusDao;
 import fm.kirtsim.kharos.moviestop.pojo.Movie;
 import fm.kirtsim.kharos.moviestop.pojo.MovieResponse;
+import fm.kirtsim.kharos.moviestop.pojo.MovieStatus;
 import fm.kirtsim.kharos.moviestop.remote.MovieListService;
 import fm.kirtsim.kharos.moviestop.repository.MovieRepository;
 import io.reactivex.Single;
@@ -137,6 +138,46 @@ public final class TestMovieRepository {
         final List<Movie> expected = movieList("T1", "T2");
 
         Mockito.when(cache.getTopRatedMovies()).thenReturn(expected);
+
+        performTest(() -> repo.getTopRatedMovies(refresh), expected);
+    }
+
+    @Test
+    public void test_getFeaturedMoviesInDbNotCachedWithoutRefresh() {
+        final boolean refresh = false;
+        final List<Movie> expected = movieList("T1", "T2");
+
+        Mockito.when(mockMovieDao.selectMovies(MovieStatus.STATUS_FEATURED)).thenReturn(Single.just(expected));
+
+        performTest(() -> repo.getFeaturedMovies(refresh), expected);
+    }
+
+    @Test
+    public void test_getPopularMoviesInDbNotCachedWithoutRefresh() {
+        final boolean refresh = false;
+        final List<Movie> expected = movieList("T1", "T2");
+
+        Mockito.when(mockMovieDao.selectMovies(MovieStatus.STATUS_POPULAR)).thenReturn(Single.just(expected));
+
+        performTest(() -> repo.getPopularMovies(refresh), expected);
+    }
+
+    @Test
+    public void test_getUpcomingMoviesInDbNotCachedWithoutRefresh() {
+        final boolean refresh = false;
+        final List<Movie> expected = movieList("T1", "T2");
+
+        Mockito.when(mockMovieDao.selectMovies(MovieStatus.STATUS_UPCOMING)).thenReturn(Single.just(expected));
+
+        performTest(() -> repo.getUpcomingMovies(refresh), expected);
+    }
+
+    @Test
+    public void test_getTopRatedMoviesInDbNotCachedWithoutRefresh() {
+        final boolean refresh = false;
+        final List<Movie> expected = movieList("T1", "T2");
+
+        Mockito.when(mockMovieDao.selectMovies(MovieStatus.STATUS_TOP_RATED)).thenReturn(Single.just(expected));
 
         performTest(() -> repo.getTopRatedMovies(refresh), expected);
     }
