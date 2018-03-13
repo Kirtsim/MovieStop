@@ -126,6 +126,45 @@ public final class TestMovieRepository {
         result.assertNoErrors().assertValues(expected);
     }
 
+    @Test
+    public void test_getUpcomingMoviesCachedNoDBWithoutRefresh() {
+        final boolean refresh = false;
+        final List<Movie> expected = movieList("T1", "T2");
+
+        Mockito.when(cache.getUpcomingMovies()).thenReturn(expected);
+
+        TestObserver<List<Movie>> result = repo.getUpcomingMovies(refresh).test();
+        scheduler.triggerActions();
+        result.awaitTerminalEvent();
+        result.assertNoErrors().assertValues(expected);
+    }
+
+    @Test
+    public void test_getPopularMoviesCachedNoDBWithoutRefresh() {
+        final boolean refresh = false;
+        final List<Movie> expected = movieList("T1", "T2");
+
+        Mockito.when(cache.getPopularMovies()).thenReturn(expected);
+
+        TestObserver<List<Movie>> result = repo.getPopularMovies(refresh).test();
+        scheduler.triggerActions();
+        result.awaitTerminalEvent();
+        result.assertNoErrors().assertValues(expected);
+    }
+
+    @Test
+    public void test_getTopRatedMoviesCachedNoDBWithoutRefresh() {
+        final boolean refresh = false;
+        final List<Movie> expected = movieList("T1", "T2");
+
+        Mockito.when(cache.getTopRatedMovies()).thenReturn(expected);
+
+        TestObserver<List<Movie>> result = repo.getTopRatedMovies(refresh).test();
+        scheduler.triggerActions();
+        result.awaitTerminalEvent();
+        result.assertNoErrors().assertValues(expected);
+    }
+
     private static List<Movie> movieList(String... titles) {
         if (titles == null)
             titles = new String[0];
