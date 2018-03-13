@@ -68,10 +68,7 @@ public final class TestMovieRepository {
 
         Mockito.when(service.listFeaturedMovies(anyString())).thenReturn(Single.just(mockResponse(expected)));
 
-        TestObserver<List<Movie>> result = repo.getFeaturedMovies(refresh).test();
-        scheduler.triggerActions();
-        result.awaitTerminalEvent();
-        result.assertNoErrors().assertValues(expected);
+        performTest(() -> repo.getFeaturedMovies(refresh), expected);
     }
 
     @Test
@@ -81,10 +78,7 @@ public final class TestMovieRepository {
 
         Mockito.when(service.listUpcomingMovies(anyString())).thenReturn(Single.just(mockResponse(expected)));
 
-        TestObserver<List<Movie>> result = repo.getUpcomingMovies(refresh).test();
-        scheduler.triggerActions();
-        result.awaitTerminalEvent();
-        result.assertNoErrors().assertValues(expected);
+        performTest(() -> repo.getUpcomingMovies(refresh), expected);
     }
 
     @Test
@@ -94,10 +88,7 @@ public final class TestMovieRepository {
 
         Mockito.when(service.listTopRatedMovies(anyString())).thenReturn(Single.just(mockResponse(expected)));
 
-        TestObserver<List<Movie>> result = repo.getTopRatedMovies(refresh).test();
-        scheduler.triggerActions();
-        result.awaitTerminalEvent();
-        result.assertNoErrors().assertValues(expected);
+        performTest(() -> repo.getTopRatedMovies(refresh), expected);
     }
 
     @Test
@@ -107,10 +98,7 @@ public final class TestMovieRepository {
 
         Mockito.when(service.listPopularMovies(anyString())).thenReturn(Single.just(mockResponse(expected)));
 
-        TestObserver<List<Movie>> result = repo.getPopularMovies(refresh).test();
-        scheduler.triggerActions();
-        result.awaitTerminalEvent();
-        result.assertNoErrors().assertValues(expected);
+        performTest(() -> repo.getPopularMovies(refresh), expected);
     }
 
     @Test
@@ -120,10 +108,7 @@ public final class TestMovieRepository {
 
         Mockito.when(cache.getFeaturedMovies()).thenReturn(expected);
 
-        TestObserver<List<Movie>> result = repo.getFeaturedMovies(refresh).test();
-        scheduler.triggerActions();
-        result.awaitTerminalEvent();
-        result.assertNoErrors().assertValues(expected);
+        performTest(() -> repo.getFeaturedMovies(refresh), expected);
     }
 
     @Test
@@ -133,10 +118,7 @@ public final class TestMovieRepository {
 
         Mockito.when(cache.getUpcomingMovies()).thenReturn(expected);
 
-        TestObserver<List<Movie>> result = repo.getUpcomingMovies(refresh).test();
-        scheduler.triggerActions();
-        result.awaitTerminalEvent();
-        result.assertNoErrors().assertValues(expected);
+        performTest(() -> repo.getUpcomingMovies(refresh), expected);
     }
 
     @Test
@@ -146,10 +128,7 @@ public final class TestMovieRepository {
 
         Mockito.when(cache.getPopularMovies()).thenReturn(expected);
 
-        TestObserver<List<Movie>> result = repo.getPopularMovies(refresh).test();
-        scheduler.triggerActions();
-        result.awaitTerminalEvent();
-        result.assertNoErrors().assertValues(expected);
+        performTest(() -> repo.getPopularMovies(refresh), expected);
     }
 
     @Test
@@ -159,10 +138,7 @@ public final class TestMovieRepository {
 
         Mockito.when(cache.getTopRatedMovies()).thenReturn(expected);
 
-        TestObserver<List<Movie>> result = repo.getTopRatedMovies(refresh).test();
-        scheduler.triggerActions();
-        result.awaitTerminalEvent();
-        result.assertNoErrors().assertValues(expected);
+        performTest(() -> repo.getTopRatedMovies(refresh), expected);
     }
 
     private static List<Movie> movieList(String... titles) {
@@ -181,5 +157,16 @@ public final class TestMovieRepository {
         final MovieResponse response = new MovieResponse();
         response.setResults(movies);
         return response;
+    }
+
+    private void performTest(RepoCall repoCall, List<Movie> expected) {
+        TestObserver<List<Movie>> result = repoCall.call().test();
+        scheduler.triggerActions();
+        result.awaitTerminalEvent();
+        result.assertNoErrors().assertValues(expected);
+    }
+
+    private interface RepoCall {
+        Single<List<Movie>> call();
     }
 }
