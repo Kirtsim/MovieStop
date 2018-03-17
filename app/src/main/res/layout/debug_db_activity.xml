@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".debug.DebugActivity">
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:id="@+id/label_refresh"
+            android:text="Refresh"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <CheckBox
+            android:id="@+id/cbx_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/label_refresh"/>
+
+        <Button
+            android:id="@+id/btn_fetch_status"
+            android:text="statuses"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/label_refresh"/>
+
+
+        <Button
+            android:id="@+id/btn_fetch_movies"
+            android:text="Movies"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btn_fetch_status"/>
+
+        <Spinner
+            android:id="@+id/status_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/movie_status"
+            android:layout_below="@id/btn_fetch_movies"/>
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

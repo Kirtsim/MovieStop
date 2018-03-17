@@ -1,7 +1,10 @@
 package fm.kirtsim.kharos.moviestop.home;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -31,8 +34,10 @@ public class HomeFragment extends MovieBaseFragment {
         getTMDBApiComponent().inject(this);
         super.onCreate(savedInstanceState);
         String baseUrl = getString(R.string.POSTER_BASE_URL);
-        postersVM = ViewModelProviders.of(this, new HomeFragmentVMFactory(repository, baseUrl))
-                .get(HomeFragmentVM.class);
+
+        final HomeFragmentVMFactory factory = new HomeFragmentVMFactory(repository,
+                getConnectivityManager(getActivity()), baseUrl);
+        postersVM = ViewModelProviders.of(this, factory).get(HomeFragmentVM.class);
     }
 
     @Nullable
@@ -50,6 +55,13 @@ public class HomeFragment extends MovieBaseFragment {
             loadImages();
         else
             refresh();
+    }
+
+    private ConnectivityManager getConnectivityManager(Activity activity) {
+        if (activity != null) {
+            return (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        }
+        return null;
     }
 
     private void loadImages() {

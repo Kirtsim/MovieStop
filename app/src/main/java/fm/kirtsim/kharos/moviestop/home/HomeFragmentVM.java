@@ -1,7 +1,10 @@
 package fm.kirtsim.kharos.moviestop.home;
 
 import android.arch.lifecycle.ViewModel;
+import android.content.Context;
 import android.databinding.ObservableField;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import java.util.List;
@@ -24,15 +27,18 @@ public class HomeFragmentVM extends ViewModel {
     private static final String TAG = ViewModel.class.getSimpleName();
     private final String posterBaseUrl;
     private final MovieRepository repository;
+    private final ConnectivityManager connectivityManager;
 
     public final ObservableField<String> backDropPosterFeaturedUrl;
     public final ObservableField<String> backDropPosterPopularUrl;
     public final ObservableField<String> backDropPosterTopRatedUrl;
     public final ObservableField<String> backDropPosterUpcomingUrl;
 
-    public HomeFragmentVM(MovieRepository repository, String posterBaseUrl) {
+    public HomeFragmentVM(MovieRepository repository, ConnectivityManager connectivityManager,
+                          String posterBaseUrl) {
         this.repository = repository;
         this.posterBaseUrl = posterBaseUrl;
+        this.connectivityManager = connectivityManager;
         backDropPosterFeaturedUrl = new ObservableField<>();
         backDropPosterPopularUrl = new ObservableField<>();
         backDropPosterTopRatedUrl = new ObservableField<>();
@@ -40,10 +46,17 @@ public class HomeFragmentVM extends ViewModel {
     }
 
     void fetchAllPosterImages(boolean refresh) {
+        if (refresh)
+            refresh = isThereInternetConnection();
         performRequest(repository.getFeaturedMovies(refresh), backDropPosterFeaturedUrl);
         performRequest(repository.getPopularMovies(refresh), backDropPosterPopularUrl);
         performRequest(repository.getTopRatedMovies(refresh), backDropPosterTopRatedUrl);
         performRequest(repository.getUpcomingMovies(refresh), backDropPosterUpcomingUrl);
+    }
+
+    private boolean isThereInternetConnection() {
+        final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 
     private void performRequest(Single<List<Movie>> movieListSingle,
@@ -51,12 +64,17 @@ public class HomeFragmentVM extends ViewModel {
         movieListSingle
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(movies -> urlObservable.set(firstMoviePosterURL(movies)),
-                        e -> Log.e(TAG, "error: ", e));
+                        e -> { Log.e(TAG, "error: ", e); e.printStackTrace(); });
     }
 
     private String firstMoviePosterURL(List<Movie> movies) {
         if (movies != null && movies.size() > 0)
             return posterBaseUrl + movies.get(0).getBackdropPath();
         return "";
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
     }
 }

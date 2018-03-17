@@ -106,4 +106,11 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="movie_thumbnail_tab_image">Movie thumbnail tab image</string>
+
+    <string-array name="movie_status">
+        <item>Featured</item>
+        <item>Popular</item>
+        <item>TopRated</item>
+        <item>Upcoming</item>
+    </string-array>
 </resources>

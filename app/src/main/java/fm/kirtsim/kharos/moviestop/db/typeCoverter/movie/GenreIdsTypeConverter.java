@@ -22,7 +22,8 @@ public final class GenreIdsTypeConverter {
         final List<Integer> ids = new ArrayList<>(strIds.length);
         try {
             for (String strId : strIds)
-                ids.add(Integer.valueOf(strId));
+                if (strId != null && !strId.isEmpty())
+                    ids.add(Integer.valueOf(strId));
         } catch (NumberFormatException e) {
             System.err.println("Could not parse genre ids from String to a List<Integer>");
             e.printStackTrace();
@@ -36,7 +37,7 @@ public final class GenreIdsTypeConverter {
         if (ids == null || ids.size() == 0)
             return "";
 
-        final StringBuilder builder = new StringBuilder(ids.get(0));
+        final StringBuilder builder = new StringBuilder(String.valueOf(ids.get(0)));
         for (int i = 1; i < ids.size(); ++i) {
             builder.append(DELIM);
             builder.append(ids.get(i));
