@@ -40,6 +40,12 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieH
         return movies.size();
     }
 
+    public void newMovies(List<Movie> newMovies) {
+        movies.clear();
+        if (newMovies != null)
+            movies.addAll(newMovies);
+    }
+
     static class MovieHolder extends RecyclerView.ViewHolder {
 
         private TextView id;

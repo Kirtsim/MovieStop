@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 import fm.kirtsim.kharos.moviestop.pojo.MovieStatus;
+import io.reactivex.Single;
 
 /**
  * Created by kharos on 07/03/2018
@@ -20,6 +21,9 @@ public interface MovieStatusDao {
 
     @Query("SELECT * FROM MovieStatus WHERE movie_id LIKE :movieId")
     List<MovieStatus> selectByMovieId(int movieId);
+
+    @Query("SELECT * FROM MovieStatus WHERE status LIKE :status")
+    Single<List<MovieStatus>> selectByStatusReturnSingle(String status);
 
     @Insert
     void insert(List<MovieStatus> statuses);

@@ -39,7 +39,7 @@ public final class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.Stat
         return statuses.size();
     }
 
-    public void setStatuses(List<MovieStatus> newStatuses) {
+    public void newStatuses(List<MovieStatus> newStatuses) {
         statuses.clear();
         if (newStatuses != null)
             statuses.addAll(newStatuses);

@@ -23,7 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".debug.DebugActivity" />
+        <activity android:name=".debug.db.DebugActivity" />
     </application>
 
 </manifest>
