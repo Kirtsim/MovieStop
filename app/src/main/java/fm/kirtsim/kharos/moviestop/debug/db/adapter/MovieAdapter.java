@@ -44,6 +44,7 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieH
         movies.clear();
         if (newMovies != null)
             movies.addAll(newMovies);
+        this.notifyDataSetChanged();
     }
 
     static class MovieHolder extends RecyclerView.ViewHolder {

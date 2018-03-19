@@ -43,6 +43,7 @@ public final class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.Stat
         statuses.clear();
         if (newStatuses != null)
             statuses.addAll(newStatuses);
+        notifyDataSetChanged();
     }
 
     static class StatusHolder extends RecyclerView.ViewHolder {
