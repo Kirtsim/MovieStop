@@ -6,4 +6,9 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_debug_db"
+        android:title="Debug DB"
+        app:showAsAction="never" />
 </menu>

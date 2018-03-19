@@ -1,5 +1,6 @@
 package fm.kirtsim.kharos.moviestop;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -11,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import fm.kirtsim.kharos.moviestop.debug.db.DebugActivity;
 import fm.kirtsim.kharos.moviestop.factory.fragment.AbstractFragmentFactory;
 import fm.kirtsim.kharos.moviestop.factory.fragment.FragmentFactory;
 
@@ -72,7 +74,10 @@ public class MainActivity extends AppCompatActivity implements BaseFragmentListe
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_debug_db) {
+            startActivity(new Intent(getApplicationContext(), DebugActivity.class));
+            return true;
+        } else if (id == R.id.action_settings) {
             return true;
         }
 
