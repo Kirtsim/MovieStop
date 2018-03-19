@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -21,6 +22,8 @@ import static fm.kirtsim.kharos.moviestop.debug.db.DebugFragmentArguments.ARG_ST
  */
 
 public final class DebugActivity extends AppCompatActivity {
+
+    private ViewGroup toolContainer;
 
     private CheckBox refreshCbx;
 
@@ -40,8 +43,8 @@ public final class DebugActivity extends AppCompatActivity {
         initStatusCodes();
         initViews();
 
-        showMoviesBtn.setOnClickListener(ev -> startFragment(new DebugFragmentMovieDB()));
-        showStatusesBtn.setOnClickListener(ev -> startFragment(new DebugFragmentMovieStatusDB()));
+        showMoviesBtn.setOnClickListener(ev -> showFragment(new DebugFragmentMovieDB()));
+        showStatusesBtn.setOnClickListener(ev -> showFragment(new DebugFragmentMovieStatusDB()));
 
         statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -54,6 +57,13 @@ public final class DebugActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0)
+            toolContainer.setVisibility(View.VISIBLE);
+    }
+
     private void initStatusCodes() {
         final String[] statuses = getResources().getStringArray(R.array.movie_status);
 
@@ -63,15 +73,22 @@ public final class DebugActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        toolContainer = findViewById(R.id.tool_container);
         refreshCbx = findViewById(R.id.cbx_refresh);
         statusSpinner = findViewById(R.id.status_spinner);
         showMoviesBtn = findViewById(R.id.btn_fetch_movies);
         showStatusesBtn = findViewById(R.id.btn_fetch_status);
     }
 
+    private void showFragment(DebugFragment fragment) {
+        toolContainer.setVisibility(View.INVISIBLE);
+        startFragment(fragment);
+    }
+
     private void startFragment(DebugFragment fragment) {
         final FragmentTransaction txn = getSupportFragmentManager().beginTransaction();
         txn.replace(R.id.container, fragment, null);
+        txn.addToBackStack(null);
         Bundle bundle = bundleStatus(null);
         fragment.setArguments(bundleRefreshFlag(bundle));
         txn.commit();
