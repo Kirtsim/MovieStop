@@ -69,7 +69,6 @@ public class HomeFragmentVM extends ViewModel {
 
     private String firstMoviePosterURL(List<Movie> movies) {
         if (movies != null && movies.size() > 0) {
-            Log.d("DEBUG", movies.get(0).getTitle() + "  " + movies.get(0).getId());
             return posterBaseUrl + movies.get(0).getBackdropPath();
         }
         return "";

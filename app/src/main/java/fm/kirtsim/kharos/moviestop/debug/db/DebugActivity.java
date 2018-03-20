@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,7 +17,6 @@ import javax.inject.Inject;
 import fm.kirtsim.kharos.moviestop.App;
 import fm.kirtsim.kharos.moviestop.R;
 import fm.kirtsim.kharos.moviestop.repository.MovieRepository;
-import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 import static fm.kirtsim.kharos.moviestop.debug.db.DebugFragmentArguments.ARG_REFRESH;
@@ -68,7 +66,6 @@ public final class DebugActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 status = statusCodes[position];
-                Log.d("DEBUG", "status code: " + status);
             }
 
             @Override public void onNothingSelected(AdapterView<?> parent) {}
