@@ -2,7 +2,6 @@ package fm.kirtsim.kharos.moviestop.repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import fm.kirtsim.kharos.moviestop.cache.MovieCache;
 import fm.kirtsim.kharos.moviestop.db.MovieDao;
@@ -14,9 +13,6 @@ import fm.kirtsim.kharos.moviestop.remote.MovieListService;
 import fm.kirtsim.kharos.moviestop.threading.SchedulerProvider;
 import io.reactivex.Completable;
 import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Created by kharos on 04/03/2018
@@ -98,8 +94,9 @@ public final class MovieRepository {
         if (refresh)
             return requestMovies(apiCall, cacheAssigner, movieStatus);
 
-        if (!cachedMoviesGetter.getCachedMovies().isEmpty())
+        if (!cachedMoviesGetter.getCachedMovies().isEmpty()) {
             return Single.just(cachedMoviesGetter.getCachedMovies());
+        }
 
         return movieDao.selectMovies(movieStatus).subscribeOn(schedulerProvider.newScheduler())
                 .doOnSuccess(cacheAssigner::assignMovies);

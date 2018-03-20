@@ -2,6 +2,7 @@ package fm.kirtsim.kharos.moviestop.factory.viewModel;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
+import android.net.ConnectivityManager;
 import android.support.annotation.NonNull;
 
 import fm.kirtsim.kharos.moviestop.cache.MoviesCache;
@@ -16,10 +17,13 @@ public class HomeFragmentVMFactory implements ViewModelProvider.Factory {
 
     private final MovieRepository repository;
     private final String posterBaseUrl;
+    private final ConnectivityManager connectivityManager;
 
-    public HomeFragmentVMFactory(MovieRepository repository, String posterBaseUrl) {
+    public HomeFragmentVMFactory(MovieRepository repository, ConnectivityManager connectivityManager,
+                                 String posterBaseUrl) {
         this.repository = repository;
         this.posterBaseUrl = posterBaseUrl;
+        this.connectivityManager = connectivityManager;
     }
 
     @SuppressWarnings("unchecked")
@@ -29,6 +33,6 @@ public class HomeFragmentVMFactory implements ViewModelProvider.Factory {
         if (!modelClass.isAssignableFrom(HomeFragmentVM.class))
             throw new IllegalArgumentException("Required view model class: " + HomeFragmentVM.class.getSimpleName());
 
-        return (T) new HomeFragmentVM(repository, posterBaseUrl);
+        return (T) new HomeFragmentVM(repository, connectivityManager, posterBaseUrl);
     }
 }
