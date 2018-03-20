@@ -2,6 +2,7 @@ package fm.kirtsim.kharos.moviestop.debug.db;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,7 +13,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 
+import javax.inject.Inject;
+
+import fm.kirtsim.kharos.moviestop.App;
 import fm.kirtsim.kharos.moviestop.R;
+import fm.kirtsim.kharos.moviestop.repository.MovieRepository;
+import io.reactivex.CompletableObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 import static fm.kirtsim.kharos.moviestop.debug.db.DebugFragmentArguments.ARG_REFRESH;
 import static fm.kirtsim.kharos.moviestop.debug.db.DebugFragmentArguments.ARG_STATUS;
@@ -23,6 +30,9 @@ import static fm.kirtsim.kharos.moviestop.debug.db.DebugFragmentArguments.ARG_ST
 
 public final class DebugActivity extends AppCompatActivity {
 
+    @Inject
+    MovieRepository repo;
+
     private ViewGroup toolContainer;
 
     private CheckBox refreshCbx;
@@ -31,6 +41,7 @@ public final class DebugActivity extends AppCompatActivity {
 
     private Button showMoviesBtn;
     private Button showStatusesBtn;
+    private Button deleteAllBtn;
 
     private String[] statusCodes;
     private String status;
@@ -38,6 +49,7 @@ public final class DebugActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        ((App) getApplication()).getTmdbApiComponent().inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.debug_db_activity);
         initStatusCodes();
@@ -45,6 +57,12 @@ public final class DebugActivity extends AppCompatActivity {
 
         showMoviesBtn.setOnClickListener(ev -> showFragment(new DebugFragmentMovieDB()));
         showStatusesBtn.setOnClickListener(ev -> showFragment(new DebugFragmentMovieStatusDB()));
+        deleteAllBtn.setOnClickListener(ev -> {
+            repo.clearDatabase().observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(() -> Snackbar.make(toolContainer,
+                            "database cleared", Snackbar.LENGTH_SHORT).show(),
+                            e -> Snackbar.make(toolContainer, "failed to clear the db", Snackbar.LENGTH_SHORT).show());
+        });
 
         statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -78,6 +96,7 @@ public final class DebugActivity extends AppCompatActivity {
         statusSpinner = findViewById(R.id.status_spinner);
         showMoviesBtn = findViewById(R.id.btn_fetch_movies);
         showStatusesBtn = findViewById(R.id.btn_fetch_status);
+        deleteAllBtn = findViewById(R.id.btn_delete);
     }
 
     private void showFragment(DebugFragment fragment) {

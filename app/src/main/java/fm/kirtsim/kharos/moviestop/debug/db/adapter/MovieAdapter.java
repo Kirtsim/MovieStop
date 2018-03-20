@@ -25,7 +25,7 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieH
     public MovieHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final Context context = parent.getContext();
         final LayoutInflater inflater = LayoutInflater.from(context);
-        View root = inflater.inflate(R.layout.debug_status_item, parent, false);
+        View root = inflater.inflate(R.layout.debug_movie_item, parent, false);
         return new MovieHolder(root);
 
     }
@@ -61,7 +61,10 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieH
         void assignMovie(Movie movie) {
             if (movie != null) {
                 id.setText(String.valueOf(movie.getId()));
-                title.setText(movie.getTitle());
+                String title = movie.getTitle();
+                if (title == null || title.isEmpty())
+                    title = "EMPTY TITLE";
+                this.title.setText(title);
             }
         }
     }

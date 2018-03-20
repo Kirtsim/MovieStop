@@ -3,6 +3,7 @@ package fm.kirtsim.kharos.moviestop.di.component;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import fm.kirtsim.kharos.moviestop.debug.db.DebugActivity;
 import fm.kirtsim.kharos.moviestop.debug.db.DebugFragment;
 import fm.kirtsim.kharos.moviestop.di.AppModule;
 import fm.kirtsim.kharos.moviestop.di.TMDBApiModule;
@@ -19,4 +20,6 @@ public interface TMDBApiComponent {
     void inject(HomeFragment homeFragment);
 
     void inject(DebugFragment debugFragment);
+
+    void inject(DebugActivity debugActivity);
 }
