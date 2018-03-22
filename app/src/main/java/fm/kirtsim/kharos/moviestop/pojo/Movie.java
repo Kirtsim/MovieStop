@@ -216,7 +216,7 @@ public class Movie {
 
     @Override
     public String toString() {
-        return "Movie - title: " + title + " - bckURL: " + backdropPath;
+        return "Movie {id: " + id + ", title: " + title + "}";
     }
 
     @Override
@@ -233,7 +233,7 @@ public class Movie {
                 popularity == movie.popularity &&
                 posterPath.equals(movie.posterPath) &&
                 originalLanguage.equals(movie.originalLanguage) &&
-                genreIds == movie.genreIds &&
+                genreIds.equals(movie.genreIds) &&
                 backdropPath.equals(movie.backdropPath) &&
                 adult == movie.adult &&
                 overview.equals(movie.overview) &&
