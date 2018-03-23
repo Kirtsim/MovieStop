@@ -15,6 +15,9 @@ import fm.kirtsim.kharos.moviestop.pojo.MovieStatus;
 @Dao
 public interface MovieStatusDao {
 
+    @Query("SELECT * FROM MovieStatus")
+    List<MovieStatus> selectAll();
+
     @Query("SELECT * FROM MovieStatus WHERE status LIKE :status")
     List<MovieStatus> selectByStatus(String status);
 
