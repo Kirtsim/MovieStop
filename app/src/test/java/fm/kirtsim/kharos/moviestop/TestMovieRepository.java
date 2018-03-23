@@ -43,23 +43,23 @@ public final class TestMovieRepository {
     private MovieListService service;
 
     @Mock
-    private MovieDao mockMovieDao;
+    private MovieDao movieDao;
 
     @Mock
-    private MovieStatusDao mockMovieStatusDao;
+    private MovieStatusDao movieStatusDao;
 
     private TestScheduler scheduler;
     private MovieRepository repo;
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
-
+    
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         scheduler = new TestScheduler();
-        repo = new MovieRepository(cache, service, mockMovieDao, mockMovieStatusDao, () -> scheduler, "123");
+        repo = new MovieRepository(cache, service, movieDao, movieStatusDao, () -> scheduler, "123");
     }
 
     @Test
@@ -147,7 +147,7 @@ public final class TestMovieRepository {
         final boolean refresh = false;
         final List<Movie> expected = movieList("T1", "T2");
 
-        Mockito.when(mockMovieDao.selectMovies(MovieStatus.STATUS_FEATURED)).thenReturn(Single.just(expected));
+        Mockito.when(movieDao.selectMovies(MovieStatus.STATUS_FEATURED)).thenReturn(Single.just(expected));
 
         performTest(() -> repo.getFeaturedMovies(refresh), expected);
     }
@@ -157,7 +157,7 @@ public final class TestMovieRepository {
         final boolean refresh = false;
         final List<Movie> expected = movieList("T1", "T2");
 
-        Mockito.when(mockMovieDao.selectMovies(MovieStatus.STATUS_POPULAR)).thenReturn(Single.just(expected));
+        Mockito.when(movieDao.selectMovies(MovieStatus.STATUS_POPULAR)).thenReturn(Single.just(expected));
 
         performTest(() -> repo.getPopularMovies(refresh), expected);
     }
@@ -167,7 +167,7 @@ public final class TestMovieRepository {
         final boolean refresh = false;
         final List<Movie> expected = movieList("T1", "T2");
 
-        Mockito.when(mockMovieDao.selectMovies(MovieStatus.STATUS_UPCOMING)).thenReturn(Single.just(expected));
+        Mockito.when(movieDao.selectMovies(MovieStatus.STATUS_UPCOMING)).thenReturn(Single.just(expected));
 
         performTest(() -> repo.getUpcomingMovies(refresh), expected);
     }
@@ -177,7 +177,7 @@ public final class TestMovieRepository {
         final boolean refresh = false;
         final List<Movie> expected = movieList("T1", "T2");
 
-        Mockito.when(mockMovieDao.selectMovies(MovieStatus.STATUS_TOP_RATED)).thenReturn(Single.just(expected));
+        Mockito.when(movieDao.selectMovies(MovieStatus.STATUS_TOP_RATED)).thenReturn(Single.just(expected));
 
         performTest(() -> repo.getTopRatedMovies(refresh), expected);
     }
@@ -204,7 +204,7 @@ public final class TestMovieRepository {
         TestObserver<List<Movie>> result = repoCall.call().test();
         scheduler.triggerActions();
         result.awaitTerminalEvent();
-        result.assertNoErrors().assertValues(expected);
+        result.assertNoErrors().assertValue(expected);
     }
 
     private interface RepoCall {
