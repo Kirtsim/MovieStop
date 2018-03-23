@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,6 +34,11 @@ import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.schedulers.TestScheduler;
 
+import static fm.kirtsim.kharos.moviestop.pojo.MovieStatus.STATUS_FEATURED;
+import static fm.kirtsim.kharos.moviestop.pojo.MovieStatus.STATUS_POPULAR;
+import static fm.kirtsim.kharos.moviestop.pojo.MovieStatus.STATUS_TOP_RATED;
+import static fm.kirtsim.kharos.moviestop.pojo.MovieStatus.STATUS_UPCOMING;
+import static junit.framework.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 
 
@@ -40,6 +46,7 @@ import static org.mockito.ArgumentMatchers.anyString;
  * Created by kharos on 09/03/2018
  */
 
+@SuppressWarnings("unchecked")
 @RunWith(AndroidJUnit4.class)
 public class TestMovieRepositoryDbCalls {
     private final boolean NO_REFRESH = false;
@@ -74,31 +81,32 @@ public class TestMovieRepositoryDbCalls {
         movieStatusDao = movieDB.getMovieStatusDao();
     }
 
+    @After
     public void closeDb() throws IOException {
         movieDB.close();
     }
 
     @Test
     public void test_getFeaturedMoviesInDbAssertTrue() {
-        testGetMoviesInDbNoRefreshWithStatusAssertTrue(MovieStatus.STATUS_FEATURED,
+        testGetMoviesInDbNoRefreshWithStatusAssertTrue(STATUS_FEATURED,
                 () -> repo.getFeaturedMovies(NO_REFRESH));
     }
 
     @Test
     public void test_getPopularMoviesInDbAssertTrue() {
-        testGetMoviesInDbNoRefreshWithStatusAssertTrue(MovieStatus.STATUS_POPULAR,
+        testGetMoviesInDbNoRefreshWithStatusAssertTrue(STATUS_POPULAR,
                 () -> repo.getPopularMovies(NO_REFRESH));
     }
 
     @Test
     public void test_getUpcomingMoviesInDbAssertTrue() {
-        testGetMoviesInDbNoRefreshWithStatusAssertTrue(MovieStatus.STATUS_UPCOMING, 
+        testGetMoviesInDbNoRefreshWithStatusAssertTrue(STATUS_UPCOMING, 
                 () -> repo.getUpcomingMovies(NO_REFRESH));
     }
 
     @Test
     public void test_getTopRatedMoviesInDbAssertTrue() {
-        testGetMoviesInDbNoRefreshWithStatusAssertTrue(MovieStatus.STATUS_TOP_RATED,
+        testGetMoviesInDbNoRefreshWithStatusAssertTrue(STATUS_TOP_RATED,
                 () -> repo.getTopRatedMovies(NO_REFRESH));
     }
     
@@ -109,7 +117,7 @@ public class TestMovieRepositoryDbCalls {
         movieDao.insertAll(expected);
         movieStatusDao.insert(statuses);
 
-        performTestTrue(call, expected);
+        performTest(call).assertNoErrors().assertValue(expected);
     }
 
     @Test
@@ -126,8 +134,31 @@ public class TestMovieRepositoryDbCalls {
         repo.getPopularMovies(DO_REFRESH).subscribeOn(scheduler).subscribe();
         scheduler.triggerActions();
 
-        performTestTrue(() -> movieDao.selectMovies(MovieStatus.STATUS_FEATURED), featured);
-        performTestTrue(() -> movieDao.selectMovies(MovieStatus.STATUS_POPULAR), popular);
+        performTest(() -> movieDao.selectMovies(STATUS_FEATURED)).assertNoErrors()
+                .assertValues(featured);
+        performTest(() -> movieDao.selectMovies(STATUS_POPULAR)).assertNoErrors()
+                .assertValues(popular);
+        performTest(() -> movieDao.selectAll()).assertNoErrors().assertValue(list -> list.size() == 3);
+        assertEquals("number of statuses", 4, movieStatusDao.selectAll().size());
+    }
+
+    @Test
+    public void test_queryMoviesWithMoreStatusesAssertTrue() {
+        final List<Movie> upcoming = movieList(1, "T1", "TS");
+        final List<Movie> popular = movieList(2, "TS", "T3");
+        final List<MovieStatus> statuses = statusList(upcoming, STATUS_UPCOMING);
+        statuses.addAll(statusList(popular, STATUS_POPULAR));
+
+        movieDao.insertAll(upcoming);
+        movieDao.insertAll(popular);
+        movieStatusDao.insert(statuses);
+
+        performTest(() -> movieDao.selectMovies(STATUS_UPCOMING)).assertNoErrors()
+                .assertValues(upcoming);
+        performTest(() -> movieDao.selectMovies(STATUS_POPULAR)).assertNoErrors()
+                .assertValues(popular);
+        performTest(() -> movieDao.selectAll()).assertNoErrors().assertValue(ret -> ret.size() == 3);
+        assertEquals("number of statuses", 4, movieStatusDao.selectAll().size());
     }
 
     private static List<MovieStatus> statusList(List<Movie> movies, String statusCode) {
@@ -152,37 +183,12 @@ public class TestMovieRepositoryDbCalls {
         }
         return list;
     }
-
-    private void performTestTrue(RepoCall repoCall, List<Movie> expected) {
-        TestObserver<List<Movie>> result = repoCall.call().test();
+    
+    private TestObserver<List<Movie>> performTest(RepoCall call) {
+        TestObserver<List<Movie>> result = call.call().test();
         scheduler.triggerActions();
         result.awaitTerminalEvent();
-        result.assertNoErrors().assertValues(expected);
-    }
-
-    private MovieListService mockApi(List<Movie> featured, List<Movie> popular, List<Movie> upcoming,
-                                     List<Movie> topRated) {
-        return new MovieListService() {
-            @Override
-            public Single<MovieResponse> listFeaturedMovies(String apiKey) {
-                return Single.just(mockResponse(featured));
-            }
-
-            @Override
-            public Single<MovieResponse> listPopularMovies(String apiKey) {
-                return Single.just(mockResponse(popular));
-            }
-
-            @Override
-            public Single<MovieResponse> listUpcomingMovies(String apiKey) {
-                return Single.just(mockResponse(upcoming));
-            }
-
-            @Override
-            public Single<MovieResponse> listTopRatedMovies(String apiKey) {
-                return Single.just(mockResponse(topRated));
-            }
-        };
+        return result;
     }
 
     private MovieResponse mockResponse(List<Movie> movies) {
