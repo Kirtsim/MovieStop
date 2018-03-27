@@ -1,33 +1,37 @@
 package fm.kirtsim.kharos.moviestop.movielist.adapter;
 
+import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import fm.kirtsim.kharos.moviestop.R;
+import fm.kirtsim.kharos.moviestop.movielist.adapter.viewHolder.AMovieItemVH;
 import fm.kirtsim.kharos.moviestop.pojo.Movie;
 
 /**
- * Created by kharos on 23/03/2018
+ * Created by kharos on 24/03/2018
  */
 
-public final class MovieListAdapter extends RecyclerView.Adapter<MovieItemVH> {
+public abstract class MovieListAdapter extends RecyclerView.Adapter<AMovieItemVH> {
 
-    private final List<Movie> movies = new ArrayList<>(10);
+    protected final List<Movie> movies;
 
-    @Override
-    public MovieItemVH onCreateViewHolder(ViewGroup parent, int viewType) {
-        final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View movieItemView = inflater.inflate(R.layout.movie_list_item, parent, false);
-        return new MovieItemVH(movieItemView);
+    protected MovieListAdapter() {
+        movies = initializeMovieList();
     }
 
     @Override
-    public void onBindViewHolder(MovieItemVH holder, int position) {
+    public AMovieItemVH onCreateViewHolder(ViewGroup parent, int viewType) {
+        final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View movieItemView = inflater.inflate(movieItemLayout(), parent, false);
+        return createViewHolder(movieItemView);
+    }
+
+    @Override
+    public void onBindViewHolder(AMovieItemVH holder, int position) {
         holder.assignMovie(movies.get(position));
     }
 
@@ -35,4 +39,13 @@ public final class MovieListAdapter extends RecyclerView.Adapter<MovieItemVH> {
     public int getItemCount() {
         return movies.size();
     }
+
+    protected abstract List<Movie> initializeMovieList();
+
+    @LayoutRes
+    protected abstract int movieItemLayout();
+
+    protected abstract AMovieItemVH createViewHolder(View view);
+
+    public abstract void newMovies(List<Movie> newMovies);
 }
