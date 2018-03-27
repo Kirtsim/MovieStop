@@ -20,4 +20,8 @@ public final class MovieListVM extends ViewModel {
         this.movieRepo = repo;
         this.adapter = adapter;
     }
+
+    public MovieListAdapter getAdapter() {
+        return adapter;
+    }
 }
